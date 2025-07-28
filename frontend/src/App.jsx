@@ -3,11 +3,20 @@ import ClientList from './components/ClientList';
 import AddClient from './components/AddClient';
 import ClientDetails from './components/ClientDetails';
 import Report from './components/Report';
+import { AuthProvider, useAuth } from './AuthProvider';
+import Login from './Login';
 import './App.css';
 
-export default function App() {
+function MainRoutes() {
+  const { user, role, logout } = useAuth();
+  if (!user) return <Login />;
+
   return (
-    <Router>
+    <>
+      <header className="header">
+        <span>{user.displayName} - {role}</span>
+        <button onClick={logout}>Cerrar sesión</button>
+      </header>
       <nav>
         <Link to="/">Clientes</Link>
         <Link to="/add">Nuevo cliente</Link>
@@ -21,6 +30,16 @@ export default function App() {
           <Route path="/report" element={<Report />} />
         </Routes>
       </div>
-    </Router>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <MainRoutes />
+      </Router>
+    </AuthProvider>
   );
 }
