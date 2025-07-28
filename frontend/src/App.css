@@ -2,6 +2,18 @@ nav {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
+  background-color: var(--primary);
+  padding: 0.5rem 1rem;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 600px) {
@@ -17,6 +29,10 @@ form {
   gap: 0.5rem;
   max-width: 400px;
   margin: auto;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
 
 .list {
@@ -28,4 +44,7 @@ form {
   margin: 0.5rem 0;
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
 }
