@@ -13,12 +13,14 @@ export default function App() {
         <Link to="/add">Nuevo cliente</Link>
         <Link to="/report">Reporte</Link>
       </nav>
-      <Routes>
-        <Route path="/" element={<ClientList />} />
-        <Route path="/add" element={<AddClient />} />
-        <Route path="/client/:id" element={<ClientDetails />} />
-        <Route path="/report" element={<Report />} />
-      </Routes>
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<ClientList />} />
+          <Route path="/add" element={<AddClient />} />
+          <Route path="/client/:id" element={<ClientDetails />} />
+          <Route path="/report" element={<Report />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
