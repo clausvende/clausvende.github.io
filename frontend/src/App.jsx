@@ -3,6 +3,7 @@ import ClientList from './components/ClientList';
 import AddClient from './components/AddClient';
 import ClientDetails from './components/ClientDetails';
 import Report from './components/Report';
+import AddSale from './components/AddSale';
 import { AuthProvider, useAuth } from './AuthProvider';
 import Login from './Login';
 import './App.css';
@@ -21,6 +22,7 @@ function MainRoutes() {
         <Link to="/">Clientes</Link>
         <Link to="/add">Nuevo cliente</Link>
         <Link to="/report">Reporte</Link>
+        <Link to="/sale">Nueva venta</Link>
       </nav>
       <div className="container">
         <Routes>
@@ -28,6 +30,7 @@ function MainRoutes() {
           <Route path="/add" element={<AddClient />} />
           <Route path="/client/:id" element={<ClientDetails />} />
           <Route path="/report" element={<Report />} />
+          <Route path="/sale" element={<AddSale />} />
         </Routes>
       </div>
     </>
