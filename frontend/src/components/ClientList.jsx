@@ -1,9 +1,8 @@
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 
-export default function ClientList() {
+export default function ClientList({ go }) {
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
@@ -20,7 +19,7 @@ export default function ClientList() {
       <ul className="list">
         {clients.map(c => (
           <li key={c.id}>
-            <Link to={`/client/${c.id}`}>{c.name}</Link> - deuda: ${c.balance || 0}
+            <button onClick={() => go('client', c.id)}>{c.name}</button> - deuda: ${c.balance || 0}
           </li>
         ))}
       </ul>

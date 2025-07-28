@@ -1,10 +1,8 @@
 import { collection, addDoc, onSnapshot, doc, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
 
-export default function ClientDetails() {
-  const { id } = useParams();
+export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
   const [payments, setPayments] = useState([]);
   const [sales, setSales] = useState([]);
@@ -67,6 +65,7 @@ export default function ClientDetails() {
 
   return (
     <div>
+      <button onClick={() => go('list')}>Regresar</button>
       <h2>{client.name}</h2>
       <p>Teléfono: {client.phone}</p>
       {client.notes && <p>Observaciones: {client.notes}</p>}
