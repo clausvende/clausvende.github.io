@@ -1,13 +1,11 @@
 import { collection, addDoc } from 'firebase/firestore';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 
-export default function AddClient() {
+export default function AddClient({ go }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +15,7 @@ export default function AddClient() {
       notes,
       balance: 0,
     });
-    navigate('/');
+    go('list');
   };
 
   return (

@@ -1,13 +1,11 @@
 import { collection, getDocs, doc, addDoc, updateDoc, increment } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 
-export default function AddSale() {
+export default function AddSale({ go }) {
   const [clients, setClients] = useState([]);
   const [clientId, setClientId] = useState('');
   const [amount, setAmount] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
@@ -24,7 +22,7 @@ export default function AddSale() {
     const ref = doc(db, 'clients', clientId);
     await addDoc(collection(ref, 'sales'), { amount: value, date: Date.now() });
     await updateDoc(ref, { balance: increment(value), total: increment(value) });
-    navigate(`/client/${clientId}`);
+    go('client', clientId);
   };
 
   return (

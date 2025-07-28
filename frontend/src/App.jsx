@@ -1,16 +1,36 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import ClientList from './components/ClientList';
-import AddClient from './components/AddClient';
-import ClientDetails from './components/ClientDetails';
-import Report from './components/Report';
-import AddSale from './components/AddSale';
-import { AuthProvider, useAuth } from './AuthProvider';
-import Login from './Login';
-import './App.css';
+import { useState } from 'react'
+import ClientList from './components/ClientList'
+import AddClient from './components/AddClient'
+import ClientDetails from './components/ClientDetails'
+import Report from './components/Report'
+import AddSale from './components/AddSale'
+import { AuthProvider, useAuth } from './AuthProvider'
+import Login from './Login'
+import './App.css'
 
-function MainRoutes() {
-  const { user, role, logout } = useAuth();
-  if (!user) return <Login />;
+function MainContent({ page, setPage }) {
+  const { user, role, logout } = useAuth()
+  if (!user) return <Login />
+
+  const go = (name, clientId = null) => setPage({ name, clientId })
+
+  let content
+  switch (page.name) {
+    case 'add':
+      content = <AddClient go={go} />
+      break
+    case 'client':
+      content = <ClientDetails id={page.clientId} go={go} />
+      break
+    case 'report':
+      content = <Report />
+      break
+    case 'sale':
+      content = <AddSale go={go} />
+      break
+    default:
+      content = <ClientList go={go} />
+  }
 
   return (
     <>
@@ -19,30 +39,23 @@ function MainRoutes() {
         <button onClick={logout}>Cerrar sesión</button>
       </header>
       <nav>
-        <Link to="/">Clientes</Link>
-        <Link to="/add">Nuevo cliente</Link>
-        <Link to="/report">Reporte</Link>
-        <Link to="/sale">Nueva venta</Link>
+        <button onClick={() => go('list')}>Clientes</button>
+        <button onClick={() => go('add')}>Nuevo cliente</button>
+        <button onClick={() => go('report')}>Reporte</button>
+        <button onClick={() => go('sale')}>Nueva venta</button>
       </nav>
       <div className="container">
-        <Routes>
-          <Route path="/" element={<ClientList />} />
-          <Route path="/add" element={<AddClient />} />
-          <Route path="/client/:id" element={<ClientDetails />} />
-          <Route path="/report" element={<Report />} />
-          <Route path="/sale" element={<AddSale />} />
-        </Routes>
+        {content}
       </div>
     </>
-  );
+  )
 }
 
 export default function App() {
+  const [page, setPage] = useState({ name: 'list' })
   return (
     <AuthProvider>
-      <Router>
-        <MainRoutes />
-      </Router>
+      <MainContent page={page} setPage={setPage} />
     </AuthProvider>
-  );
+  )
 }
