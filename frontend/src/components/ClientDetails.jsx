@@ -9,6 +9,8 @@ export default function ClientDetails({ id, go }) {
   const [amount, setAmount] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editAmount, setEditAmount] = useState('');
+  const [editingSaleId, setEditingSaleId] = useState(null);
+  const [editSaleAmount, setEditSaleAmount] = useState('');
 
   useEffect(() => {
     const unsubClient = onSnapshot(doc(db, 'clients', id), snap => {
@@ -61,6 +63,38 @@ export default function ClientDetails({ id, go }) {
     await updateDoc(doc(db, 'clients', id), { balance: increment(p.amount) });
   };
 
+  const startEditSale = s => {
+    setEditingSaleId(s.id);
+    setEditSaleAmount(s.amount);
+  };
+
+  const cancelEditSale = () => {
+    setEditingSaleId(null);
+    setEditSaleAmount('');
+  };
+
+  const saveEditSale = async s => {
+    const newValue = parseFloat(editSaleAmount);
+    if (isNaN(newValue)) return;
+    await updateDoc(doc(db, 'clients', id, 'sales', s.id), { amount: newValue });
+    const diff = newValue - s.amount;
+    if (diff !== 0) {
+      await updateDoc(doc(db, 'clients', id), {
+        balance: increment(diff),
+        total: increment(diff)
+      });
+    }
+    cancelEditSale();
+  };
+
+  const removeSale = async s => {
+    await deleteDoc(doc(db, 'clients', id, 'sales', s.id));
+    await updateDoc(doc(db, 'clients', id), {
+      balance: increment(-s.amount),
+      total: increment(-s.amount)
+    });
+  };
+
   if (!client) return <p>Cargando...</p>;
 
   return (
@@ -77,7 +111,26 @@ export default function ClientDetails({ id, go }) {
       <h3>Ventas</h3>
       <ul className="list">
         {sales.map(s => (
-          <li key={s.id}>{new Date(s.date).toLocaleDateString()} - ${s.amount}</li>
+          <li key={s.id}>
+            {editingSaleId === s.id ? (
+              <>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editSaleAmount}
+                  onChange={e => setEditSaleAmount(e.target.value)}
+                />
+                <button onClick={() => saveEditSale(s)}>Guardar</button>
+                <button onClick={cancelEditSale}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                {new Date(s.date).toLocaleDateString()} - ${s.amount}
+                <button onClick={() => startEditSale(s)}>Editar</button>
+                <button onClick={() => removeSale(s)}>Eliminar</button>
+              </>
+            )}
+          </li>
         ))}
       </ul>
       <h3>Abonos</h3>
