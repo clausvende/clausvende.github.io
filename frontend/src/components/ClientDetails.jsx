@@ -1,4 +1,4 @@
-import { collection, addDoc, onSnapshot, doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, doc, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
@@ -9,6 +9,8 @@ export default function ClientDetails() {
   const [payments, setPayments] = useState([]);
   const [sales, setSales] = useState([]);
   const [amount, setAmount] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editAmount, setEditAmount] = useState('');
 
   useEffect(() => {
     const unsubClient = onSnapshot(doc(db, 'clients', id), snap => {
@@ -35,6 +37,32 @@ export default function ClientDetails() {
     setAmount('');
   };
 
+  const startEdit = p => {
+    setEditingId(p.id);
+    setEditAmount(p.amount);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditAmount('');
+  };
+
+  const saveEdit = async p => {
+    const newValue = parseFloat(editAmount);
+    if (isNaN(newValue)) return;
+    await updateDoc(doc(db, 'clients', id, 'payments', p.id), { amount: newValue });
+    const diff = newValue - p.amount;
+    if (diff !== 0) {
+      await updateDoc(doc(db, 'clients', id), { balance: increment(-diff) });
+    }
+    cancelEdit();
+  };
+
+  const removePayment = async p => {
+    await deleteDoc(doc(db, 'clients', id, 'payments', p.id));
+    await updateDoc(doc(db, 'clients', id), { balance: increment(p.amount) });
+  };
+
   if (!client) return <p>Cargando...</p>;
 
   return (
@@ -56,7 +84,26 @@ export default function ClientDetails() {
       <h3>Abonos</h3>
       <ul className="list">
         {payments.map(p => (
-          <li key={p.id}>{new Date(p.date).toLocaleDateString()} - ${p.amount}</li>
+          <li key={p.id}>
+            {editingId === p.id ? (
+              <>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editAmount}
+                  onChange={e => setEditAmount(e.target.value)}
+                />
+                <button onClick={() => saveEdit(p)}>Guardar</button>
+                <button onClick={cancelEdit}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                {new Date(p.date).toLocaleDateString()} - ${p.amount}
+                <button onClick={() => startEdit(p)}>Editar</button>
+                <button onClick={() => removePayment(p)}>Eliminar</button>
+              </>
+            )}
+          </li>
         ))}
       </ul>
     </div>

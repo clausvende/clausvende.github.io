@@ -13,6 +13,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
       if (u) {
+        const allowSnap = await getDoc(doc(db, 'usuarios', u.email))
+        if (!allowSnap.exists()) {
+          await signOut(auth)
+          setUser(null)
+          setRole(null)
+          return
+        }
         setUser(u)
         const ref = doc(db, 'users', u.uid)
         const snap = await getDoc(ref)
