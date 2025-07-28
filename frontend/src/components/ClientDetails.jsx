@@ -35,6 +35,8 @@ export default function ClientDetails() {
   return (
     <div>
       <h2>{client.name}</h2>
+      <p>Teléfono: {client.phone}</p>
+      {client.notes && <p>Observaciones: {client.notes}</p>}
       <p>Deuda actual: ${client.balance || 0}</p>
       <form onSubmit={addPayment}>
         <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
