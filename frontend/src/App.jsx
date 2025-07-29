@@ -59,7 +59,7 @@ function MainContent({ page, setPage }) {
           onClick={() => setOpen(false)}
         />
       )}
-      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20 relative`}>
+      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20`}>
         <button
           className="md:hidden absolute top-2 right-2 text-2xl"
           onClick={() => setOpen(false)}
