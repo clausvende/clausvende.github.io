@@ -56,14 +56,17 @@ function MainContent({ page, setPage }) {
       </aside>
       <div className="flex-1 flex flex-col md:ml-60">
         <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed top-0 left-0 right-0 md:left-60">
-          <button className="md:hidden" onClick={() => setOpen(!open)}>
+          <button
+            className="md:hidden text-2xl mr-4"
+            onClick={() => setOpen(!open)}
+          >
             ☰
           </button>
           <div className="flex items-center gap-2">
             <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
             <div>
               <p className="font-semibold leading-none">{user.displayName}</p>
-              <p className="text-xs text-gray-500">{role}</p>
+              <p className="text-xs text-gray-700">{role}</p>
             </div>
           </div>
           <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
