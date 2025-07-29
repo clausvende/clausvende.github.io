@@ -2,7 +2,7 @@ import { collection, getDocs, doc, addDoc, updateDoc, increment } from 'firebase
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 
-export default function AddSale({ go }) {
+export default function AddSale({ go, onDone }) {
   const [clients, setClients] = useState([]);
   const [clientId, setClientId] = useState('');
   const [amount, setAmount] = useState('');
@@ -22,7 +22,8 @@ export default function AddSale({ go }) {
     const ref = doc(db, 'clients', clientId);
     await addDoc(collection(ref, 'sales'), { amount: value, date: Date.now() });
     await updateDoc(ref, { balance: increment(value), total: increment(value) });
-    go('client', clientId);
+    if (onDone) onDone(clientId);
+    else go('client', clientId);
   };
 
   return (

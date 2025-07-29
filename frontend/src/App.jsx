@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import ClientList from './components/ClientList'
-import AddClient from './components/AddClient'
 import ClientDetails from './components/ClientDetails'
 import Report from './components/Report'
-import AddSale from './components/AddSale'
+import SalesList from './components/SalesList'
 import { AuthProvider, useAuth } from './AuthProvider'
 import Login from './Login'
 import './App.css'
@@ -16,17 +15,17 @@ function MainContent({ page, setPage }) {
 
   let content
   switch (page.name) {
-    case 'add':
-      content = <AddClient go={go} />
+    case 'clients':
+      content = <ClientList go={go} />
+      break
+    case 'sales':
+      content = <SalesList />
+      break
+    case 'finance':
+      content = <Report />
       break
     case 'client':
       content = <ClientDetails id={page.clientId} go={go} />
-      break
-    case 'report':
-      content = <Report />
-      break
-    case 'sale':
-      content = <AddSale go={go} />
       break
     default:
       content = <ClientList go={go} />
@@ -35,14 +34,21 @@ function MainContent({ page, setPage }) {
   return (
     <>
       <header className="header">
-        <span>{user.displayName} - {role}</span>
+        <div className="user-info">
+          <img src={user.photoURL} alt="avatar" />
+          <div>
+            <strong>{user.displayName}</strong>
+            <div className="role">{role}</div>
+          </div>
+        </div>
         <button onClick={logout}>Cerrar sesión</button>
       </header>
       <nav>
-        <button onClick={() => go('list')}>Clientes</button>
-        <button onClick={() => go('add')}>Nuevo cliente</button>
-        <button onClick={() => go('report')}>Reporte</button>
-        <button onClick={() => go('sale')}>Nueva venta</button>
+        <button onClick={() => go('sales')}>🛒 Ventas</button>
+        <span className="sep">|</span>
+        <button onClick={() => go('clients')}>👥 Clientes</button>
+        <span className="sep">|</span>
+        <button onClick={() => go('finance')}>💰 Finanzas</button>
       </nav>
       <div className="container">
         {content}
@@ -52,7 +58,7 @@ function MainContent({ page, setPage }) {
 }
 
 export default function App() {
-  const [page, setPage] = useState({ name: 'list' })
+  const [page, setPage] = useState({ name: 'clients' })
   return (
     <AuthProvider>
       <MainContent page={page} setPage={setPage} />
