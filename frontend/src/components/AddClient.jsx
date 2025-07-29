@@ -36,26 +36,29 @@ export default function AddClient({ go, onDone, client }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>{client ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow max-w-md mx-auto space-y-4">
+      <h2 className="text-lg font-semibold text-center">{client ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
       <input
+        className="w-full border rounded px-3 py-2"
         value={name}
         onChange={e => setName(e.target.value)}
         placeholder="Nombre"
         required
       />
       <input
+        className="w-full border rounded px-3 py-2"
         value={phone}
         onChange={e => setPhone(e.target.value)}
         placeholder="Teléfono"
         pattern="\(\d{3}\) \d{3} \d{4}"
       />
       <input
+        className="w-full border rounded px-3 py-2"
         value={notes}
         onChange={e => setNotes(e.target.value)}
         placeholder="Observaciones"
       />
-      <button type="submit">Guardar</button>
+      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Guardar</button>
     </form>
   );
 }

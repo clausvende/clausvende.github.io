@@ -40,21 +40,21 @@ export default function AccountStatement({ clientId }) {
   const totalPayments = payments.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div>
-      <div ref={contentRef}>
-        <h2>Estado de cuenta</h2>
+    <div className="space-y-4">
+      <div ref={contentRef} className="space-y-2">
+        <h2 className="text-lg font-semibold">Estado de cuenta</h2>
         <p><strong>Nombre:</strong> {client.name}</p>
         <p><strong>Teléfono:</strong> {client.phone}</p>
         {client.notes && <p><strong>Notas:</strong> {client.notes}</p>}
         <p><strong>Saldo actual:</strong> ${client.balance || 0}</p>
-        <h3>Ventas</h3>
-        <ul>
+        <h3 className="font-semibold">Ventas</h3>
+        <ul className="list-disc pl-5">
           {sales.map(s => (
             <li key={s.id}>{new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}</li>
           ))}
         </ul>
-        <h3>Abonos</h3>
-        <ul>
+        <h3 className="font-semibold">Abonos</h3>
+        <ul className="list-disc pl-5">
           {payments.map(p => (
             <li key={p.id}>{new Date(p.date).toLocaleDateString()} - ${p.amount}</li>
           ))}
@@ -62,7 +62,7 @@ export default function AccountStatement({ clientId }) {
         <p><strong>Total compras:</strong> ${totalSales}</p>
         <p><strong>Total abonos:</strong> ${totalPayments}</p>
       </div>
-      <button onClick={exportPdf}>Generar PDF</button>
+      <button onClick={exportPdf} className="bg-blue-600 text-white px-3 py-2 rounded">Generar PDF</button>
     </div>
   );
 }

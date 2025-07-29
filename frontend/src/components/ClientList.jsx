@@ -36,22 +36,25 @@ export default function ClientList({ go }) {
   };
 
   return (
-    <div>
-      <button onClick={() => setShow(true)}>
-        <img src={plus} alt="" className="icon" />Nuevo cliente
-      </button>
-      <input
-        placeholder="Buscar cliente"
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
-      <ul className="list">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <button onClick={() => setShow(true)} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded">
+          <img src={plus} alt="" className="w-5 h-5" />Nuevo cliente
+        </button>
+        <input
+          className="border rounded px-3 py-2"
+          placeholder="Buscar cliente"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+      </div>
+      <ul className="grid gap-3">
         {filtered.map(c => {
           const cleanPhone = (c.phone || '').replace(/\D/g, '');
           return (
-            <li key={c.id}>
-              <span className="name">{c.name} - deuda: ${c.balance || 0}</span>
-              <span className="actions">
+            <li key={c.id} className="bg-white p-4 rounded shadow flex justify-between items-center">
+              <span className="font-medium">{c.name} - deuda: ${c.balance || 0}</span>
+              <span className="flex gap-1">
                 <button onClick={() => go('client', c.id)}>
                   <img src={eye} alt="ver" className="icon" />
                 </button>

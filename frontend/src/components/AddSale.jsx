@@ -42,21 +42,28 @@ export default function AddSale({ go, onDone }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Nueva Venta</h2>
-      <select value={clientId} onChange={e => setClientId(e.target.value)} required>
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow max-w-md mx-auto space-y-4">
+      <h2 className="text-lg font-semibold text-center">Nueva Venta</h2>
+      <select
+        className="w-full border rounded px-3 py-2"
+        value={clientId}
+        onChange={e => setClientId(e.target.value)}
+        required
+      >
         <option value="" disabled>Selecciona un cliente</option>
         {clients.map(c => (
           <option key={c.id} value={c.id}>{c.name}</option>
         ))}
       </select>
       <input
+        className="w-full border rounded px-3 py-2"
         value={desc}
         onChange={e => setDesc(e.target.value)}
-        placeholder="Descripci\u00f3n"
+        placeholder="Descripción"
         required
       />
       <input
+        className="w-full border rounded px-3 py-2"
         value={amount}
         onChange={e => setAmount(e.target.value)}
         placeholder="Monto"
@@ -64,7 +71,7 @@ export default function AddSale({ go, onDone }) {
         step="0.01"
         required
       />
-      <button type="submit">Registrar venta</button>
+      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Registrar venta</button>
     </form>
   );
 }

@@ -73,12 +73,14 @@ export default function Report() {
   };
 
   return (
-    <div>
-      <h2>Finanzas</h2>
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold">Finanzas</h2>
       <p>Total ventas: ${summary.total}</p>
       <p>Saldo pendiente: ${summary.outstanding}</p>
-      <button onClick={exportDb}>Exportar DB</button>
-      <button onClick={() => fileRef.current.click()}>Importar DB</button>
+      <div className="flex gap-2">
+        <button onClick={exportDb} className="bg-blue-600 text-white px-3 py-1 rounded">Exportar DB</button>
+        <button onClick={() => fileRef.current.click()} className="bg-blue-600 text-white px-3 py-1 rounded">Importar DB</button>
+      </div>
       <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
     </div>
   );

@@ -111,9 +111,9 @@ export default function ClientDetails({ id, go }) {
   if (!client) return <p>Cargando...</p>;
 
   return (
-    <div>
-      <button onClick={() => go('list')}>Regresar</button>
-      <h2>
+    <div className="space-y-4">
+      <button onClick={() => go('list')} className="text-blue-600">Regresar</button>
+      <h2 className="text-lg font-semibold flex items-center gap-2">
         {client.name}
         <button onClick={() => setEditMode(true)}>
           <img src={editIcon} alt="editar" className="icon" />
@@ -125,24 +125,25 @@ export default function ClientDetails({ id, go }) {
       <p>Teléfono: {client.phone}</p>
       {client.notes && <p>Observaciones: {client.notes}</p>}
       <p>Deuda actual: ${client.balance || 0}</p>
-      <form onSubmit={addPayment}>
-        <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
-        <button type="submit">Registrar abono</button>
+      <form onSubmit={addPayment} className="flex gap-2">
+        <input className="border rounded px-3 py-2 flex-1" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
+        <button type="submit" className="bg-blue-600 text-white px-3 py-2 rounded">Registrar abono</button>
       </form>
-      <h3>Ventas</h3>
-      <ul className="list">
+      <h3 className="font-semibold">Ventas</h3>
+      <ul className="grid gap-2">
         {sales.map(s => (
-          <li key={s.id}>
+          <li key={s.id} className="bg-white p-2 rounded shadow">
             {editingSaleId === s.id ? (
               <>
                 <input
+                  className="border rounded px-2 py-1 mr-2"
                   type="number"
                   step="0.01"
                   value={editSaleAmount}
                   onChange={e => setEditSaleAmount(e.target.value)}
                 />
-                <button onClick={() => saveEditSale(s)}>Guardar</button>
-                <button onClick={cancelEditSale}>Cancelar</button>
+                <button onClick={() => saveEditSale(s)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                <button onClick={cancelEditSale} className="px-2 py-1 rounded border">Cancelar</button>
               </>
             ) : (
               <>
@@ -158,20 +159,21 @@ export default function ClientDetails({ id, go }) {
           </li>
         ))}
       </ul>
-      <h3>Abonos</h3>
-      <ul className="list">
+      <h3 className="font-semibold">Abonos</h3>
+      <ul className="grid gap-2">
         {payments.map(p => (
-          <li key={p.id}>
+          <li key={p.id} className="bg-white p-2 rounded shadow">
             {editingId === p.id ? (
               <>
                 <input
+                  className="border rounded px-2 py-1 mr-2"
                   type="number"
                   step="0.01"
                   value={editAmount}
                   onChange={e => setEditAmount(e.target.value)}
                 />
-                <button onClick={() => saveEdit(p)}>Guardar</button>
-                <button onClick={cancelEdit}>Cancelar</button>
+                <button onClick={() => saveEdit(p)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                <button onClick={cancelEdit} className="px-2 py-1 rounded border">Cancelar</button>
               </>
             ) : (
               <>

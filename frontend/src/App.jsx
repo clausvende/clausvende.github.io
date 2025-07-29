@@ -12,9 +12,13 @@ import './App.css'
 
 function MainContent({ page, setPage }) {
   const { user, role, logout } = useAuth()
+  const [open, setOpen] = useState(false)
   if (!user) return <Login />
 
-  const go = (name, clientId = null) => setPage({ name, clientId })
+  const go = (name, clientId = null) => {
+    setPage({ name, clientId })
+    setOpen(false)
+  }
 
   let content
   switch (page.name) {
@@ -35,34 +39,38 @@ function MainContent({ page, setPage }) {
   }
 
   return (
-    <>
-      <header className="header">
-        <div className="user-info">
-          <img src={user.photoURL} alt="avatar" />
-          <div>
-            <strong>{user.displayName}</strong>
-            <div className="role">{role}</div>
+    <div className="flex min-h-screen bg-gray-100">
+      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0`}>
+        <h1 className="text-lg font-semibold mb-4">Menú</h1>
+        <nav className="flex flex-col gap-2">
+          <button onClick={() => go('sales')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+            <img src={cart} alt="" className="w-5 h-5" />Ventas
+          </button>
+          <button onClick={() => go('clients')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+            <img src={users} alt="" className="w-5 h-5" />Clientes
+          </button>
+          <button onClick={() => go('finance')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+            <img src={dollar} alt="" className="w-5 h-5" />Finanzas
+          </button>
+        </nav>
+      </aside>
+      <div className="flex-1 flex flex-col md:ml-60">
+        <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed w-full md:relative md:ml-60">
+          <button className="md:hidden" onClick={() => setOpen(!open)}>
+            ☰
+          </button>
+          <div className="flex items-center gap-2">
+            <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
+            <div>
+              <p className="font-semibold leading-none">{user.displayName}</p>
+              <p className="text-xs text-gray-500">{role}</p>
+            </div>
           </div>
-        </div>
-        <button onClick={logout}>Cerrar sesión</button>
-      </header>
-      <nav>
-        <button onClick={() => go('sales')}>
-          <img src={cart} alt="" className="icon" />Ventas
-        </button>
-        <span className="sep">|</span>
-        <button onClick={() => go('clients')}>
-          <img src={users} alt="" className="icon" />Clientes
-        </button>
-        <span className="sep">|</span>
-        <button onClick={() => go('finance')}>
-          <img src={dollar} alt="" className="icon" />Finanzas
-        </button>
-      </nav>
-      <div className="container">
-        {content}
+          <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
+        </header>
+        <main className="p-4 mt-12 md:mt-4 flex-1">{content}</main>
       </div>
-    </>
+    </div>
   )
 }
 
