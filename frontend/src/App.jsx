@@ -15,6 +15,19 @@ function MainContent({ page, setPage }) {
   const [open, setOpen] = useState(false)
   if (!user) return <Login />
 
+  const splitName = name => {
+    const parts = name ? name.trim().split(/\s+/) : []
+    if (parts.length <= 2) {
+      return { nombres: parts[0] || '', apellidos: parts.slice(1).join(' ') }
+    }
+    return {
+      nombres: parts.slice(0, parts.length - 2).join(' '),
+      apellidos: parts.slice(parts.length - 2).join(' '),
+    }
+  }
+
+  const { nombres, apellidos } = splitName(user.displayName)
+
   const go = (name, clientId = null) => {
     setPage({ name, clientId })
     setOpen(false)
@@ -64,8 +77,10 @@ function MainContent({ page, setPage }) {
           </button>
           <div className="flex items-center gap-2">
             <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
-            <div>
-              <p className="font-semibold leading-none">{user.displayName}</p>
+            <div className="leading-tight">
+              <p className="font-semibold leading-tight md:hidden">{nombres}</p>
+              <p className="font-semibold leading-tight md:hidden">{apellidos}</p>
+              <p className="font-semibold leading-none hidden md:block">{user.displayName}</p>
               <p className="text-xs text-gray-700">{role}</p>
             </div>
           </div>
