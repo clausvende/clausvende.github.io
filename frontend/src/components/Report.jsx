@@ -1,9 +1,11 @@
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
+import chat from '../assets/icons/chat.svg';
 import { db } from '../firebase';
 
 export default function Report() {
   const [summary, setSummary] = useState({ total: 0, outstanding: 0 });
+  const [debtors, setDebtors] = useState([]);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -11,12 +13,27 @@ export default function Report() {
       const snap = await getDocs(collection(db, 'clients'));
       let total = 0;
       let outstanding = 0;
-      snap.forEach(doc => {
-        const data = doc.data();
+      const now = Date.now();
+      const month = 30 * 24 * 60 * 60 * 1000;
+      const overdue = [];
+      for (const docSnap of snap.docs) {
+        const data = docSnap.data();
         total += data.total || 0;
-        outstanding += data.balance || 0;
-      });
+        const balance = data.balance || 0;
+        outstanding += balance;
+        if (balance > 0) {
+          const paySnap = await getDocs(collection(db, 'clients', docSnap.id, 'payments'));
+          let last = 0;
+          paySnap.forEach(p => {
+            if (p.data().date > last) last = p.data().date;
+          });
+          if (!last || now - last >= month) {
+            overdue.push({ id: docSnap.id, name: data.name, phone: data.phone, balance });
+          }
+        }
+      }
       setSummary({ total, outstanding });
+      setDebtors(overdue);
     };
     load();
   }, []);
@@ -82,6 +99,26 @@ export default function Report() {
         <button onClick={() => fileRef.current.click()} className="bg-blue-600 text-white px-3 py-1 rounded">Importar DB</button>
       </div>
       <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
+      {debtors.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Clientes Morosos</h3>
+          <ul className="grid gap-3">
+            {debtors.map(d => {
+              const cleanPhone = (d.phone || '').replace(/\D/g, '');
+              return (
+                <li key={d.id} className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-red-600">
+                  <span className="font-medium">{d.name} - ${d.balance}</span>
+                  {cleanPhone && (
+                    <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer">
+                      <img src={chat} alt="mensaje" className="icon" />
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
