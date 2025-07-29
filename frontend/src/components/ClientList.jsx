@@ -4,12 +4,14 @@ import { db } from '../firebase';
 import AddClient from './AddClient';
 import Modal from './Modal';
 import AccountStatement from './AccountStatement';
+import AddPayment from './AddPayment';
 import eye from '../assets/icons/eye.svg';
 import docIcon from '../assets/icons/doc.svg';
 import chat from '../assets/icons/chat.svg';
 import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
 import plus from '../assets/icons/plus.svg';
+import dollar from '../assets/icons/dollar.svg';
 
 export default function ClientList({ go }) {
   const [clients, setClients] = useState([]);
@@ -17,6 +19,7 @@ export default function ClientList({ go }) {
   const [show, setShow] = useState(false);
   const [editClient, setEditClient] = useState(null);
   const [statementId, setStatementId] = useState(null);
+  const [payClientId, setPayClientId] = useState(null);
 
   const fetchClients = async () => {
     const snapshot = await getDocs(collection(db, 'clients'));
@@ -37,22 +40,39 @@ export default function ClientList({ go }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <button onClick={() => setShow(true)} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <button
+          onClick={() => setShow(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded w-full sm:w-auto"
+        >
           <img src={plus} alt="" className="w-5 h-5" />Nuevo cliente
         </button>
-        <input
-          className="border rounded px-3 py-2"
-          placeholder="Buscar cliente"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+        <div className="relative w-full sm:w-auto">
+          <input
+            className="border rounded px-3 py-2 pr-8 w-full"
+            placeholder="Buscar cliente"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
       <ul className="grid gap-3">
         {filtered.map(c => {
           const cleanPhone = (c.phone || '').replace(/\D/g, '');
           return (
-            <li key={c.id} className="bg-white p-4 rounded shadow flex justify-between items-center">
+            <li
+              key={c.id}
+              className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-blue-600"
+            >
               <span className="font-medium">{c.name} - deuda: ${c.balance || 0}</span>
               <span className="flex gap-1">
                 <button onClick={() => go('client', c.id)}>
@@ -60,6 +80,9 @@ export default function ClientList({ go }) {
                 </button>
                 <button onClick={() => setStatementId(c.id)}>
                   <img src={docIcon} alt="estado" className="icon" />
+                </button>
+                <button onClick={() => setPayClientId(c.id)}>
+                  <img src={dollar} alt="abono" className="icon" />
                 </button>
                 {cleanPhone && (
                   <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer">
@@ -90,6 +113,11 @@ export default function ClientList({ go }) {
       {statementId && (
         <Modal onClose={() => setStatementId(null)}>
           <AccountStatement clientId={statementId} />
+        </Modal>
+      )}
+      {payClientId && (
+        <Modal onClose={() => setPayClientId(null)}>
+          <AddPayment clientId={payClientId} onDone={() => { setPayClientId(null); fetchClients(); }} />
         </Modal>
       )}
     </div>
