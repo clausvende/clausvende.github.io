@@ -35,18 +35,21 @@ export default function SalesList() {
   );
 
   return (
-    <div>
-      <button onClick={() => setShow(true)}>
-        <img src={plus} alt="" className="icon" />Nueva venta
-      </button>
-      <input
-        placeholder="Buscar por cliente"
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
-      <ul className="list">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <button onClick={() => setShow(true)} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded">
+          <img src={plus} alt="" className="w-5 h-5" />Nueva venta
+        </button>
+        <input
+          className="border rounded px-3 py-2"
+          placeholder="Buscar por cliente"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+      </div>
+      <ul className="grid gap-3">
         {filtered.map(s => (
-          <li key={`${s.clientId}-${s.id}`}>
+          <li key={`${s.clientId}-${s.id}`} className="bg-white p-4 rounded shadow">
             {s.clientName} - {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
           </li>
         ))}
