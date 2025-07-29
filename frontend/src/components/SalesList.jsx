@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import AddSale from './AddSale';
 import Modal from './Modal';
+import plus from '../assets/icons/plus.svg';
 
 export default function SalesList() {
   const [sales, setSales] = useState([]);
@@ -35,7 +36,9 @@ export default function SalesList() {
 
   return (
     <div>
-      <button onClick={() => setShow(true)}>Nueva venta</button>
+      <button onClick={() => setShow(true)}>
+        <img src={plus} alt="" className="icon" />Nueva venta
+      </button>
       <input
         placeholder="Buscar por cliente"
         value={search}

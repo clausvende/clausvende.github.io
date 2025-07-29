@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import AddClient from './AddClient';
 import Modal from './Modal';
+import editIcon from '../assets/icons/edit.svg';
+import trash from '../assets/icons/trash.svg';
 
 export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
@@ -113,8 +115,12 @@ export default function ClientDetails({ id, go }) {
       <button onClick={() => go('list')}>Regresar</button>
       <h2>
         {client.name}
-        <button onClick={() => setEditMode(true)}>✏️</button>
-        <button onClick={removeClient}>🗑️</button>
+        <button onClick={() => setEditMode(true)}>
+          <img src={editIcon} alt="editar" className="icon" />
+        </button>
+        <button onClick={removeClient}>
+          <img src={trash} alt="eliminar" className="icon" />
+        </button>
       </h2>
       <p>Teléfono: {client.phone}</p>
       {client.notes && <p>Observaciones: {client.notes}</p>}
@@ -141,8 +147,12 @@ export default function ClientDetails({ id, go }) {
             ) : (
               <>
                 {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
-                <button onClick={() => startEditSale(s)}>Editar</button>
-                <button onClick={() => removeSale(s)}>Eliminar</button>
+                <button onClick={() => startEditSale(s)}>
+                  <img src={editIcon} alt="editar" className="icon" />
+                </button>
+                <button onClick={() => removeSale(s)}>
+                  <img src={trash} alt="eliminar" className="icon" />
+                </button>
               </>
             )}
           </li>
@@ -166,8 +176,12 @@ export default function ClientDetails({ id, go }) {
             ) : (
               <>
                 {new Date(p.date).toLocaleDateString()} - ${p.amount}
-                <button onClick={() => startEdit(p)}>Editar</button>
-                <button onClick={() => removePayment(p)}>Eliminar</button>
+                <button onClick={() => startEdit(p)}>
+                  <img src={editIcon} alt="editar" className="icon" />
+                </button>
+                <button onClick={() => removePayment(p)}>
+                  <img src={trash} alt="eliminar" className="icon" />
+                </button>
               </>
             )}
           </li>
