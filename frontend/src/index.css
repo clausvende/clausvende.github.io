@@ -124,4 +124,7 @@ input:focus {
     --primary-dark: #1d4ed8;
     --accent: #06b6d4;
   }
+  .bg-white {
+    color: #1f2937;
+  }
 }
