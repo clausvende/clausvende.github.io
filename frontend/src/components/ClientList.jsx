@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import AddClient from './AddClient';
@@ -8,16 +8,24 @@ export default function ClientList({ go }) {
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState('');
   const [show, setShow] = useState(false);
+  const [editClient, setEditClient] = useState(null);
+
+  const fetchClients = async () => {
+    const snapshot = await getDocs(collection(db, 'clients'));
+    setClients(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
 
   useEffect(() => {
-    const fetchClients = async () => {
-      const snapshot = await getDocs(collection(db, 'clients'));
-      setClients(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    };
     fetchClients();
   }, []);
 
   const filtered = clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
+
+  const removeClient = async c => {
+    if (!window.confirm('¿Eliminar este cliente?')) return;
+    await deleteDoc(doc(db, 'clients', c.id));
+    fetchClients();
+  };
 
   return (
     <div>
@@ -30,13 +38,24 @@ export default function ClientList({ go }) {
       <ul className="list">
         {filtered.map(c => (
           <li key={c.id}>
-            <button onClick={() => go('client', c.id)}>{c.name}</button> - deuda: ${c.balance || 0}
+            <span>
+              <button onClick={() => go('client', c.id)}>{c.name}</button> - deuda: ${c.balance || 0}
+            </span>
+            <span>
+              <button onClick={() => setEditClient(c)}>✏️</button>
+              <button onClick={() => removeClient(c)}>🗑️</button>
+            </span>
           </li>
         ))}
       </ul>
       {show && (
         <Modal onClose={() => setShow(false)}>
-          <AddClient onDone={() => setShow(false)} />
+          <AddClient onDone={() => { setShow(false); fetchClients(); }} />
+        </Modal>
+      )}
+      {editClient && (
+        <Modal onClose={() => setEditClient(null)}>
+          <AddClient client={editClient} onDone={() => { setEditClient(null); fetchClients(); }} />
         </Modal>
       )}
     </div>

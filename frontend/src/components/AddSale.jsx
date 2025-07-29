@@ -6,6 +6,7 @@ export default function AddSale({ go, onDone }) {
   const [clients, setClients] = useState([]);
   const [clientId, setClientId] = useState('');
   const [amount, setAmount] = useState('');
+  const [desc, setDesc] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -17,10 +18,10 @@ export default function AddSale({ go, onDone }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!clientId || !amount) return;
+    if (!clientId || !amount || !desc) return;
     const value = parseFloat(amount);
     const ref = doc(db, 'clients', clientId);
-    await addDoc(collection(ref, 'sales'), { amount: value, date: Date.now() });
+    await addDoc(collection(ref, 'sales'), { amount: value, description: desc, date: Date.now() });
     await updateDoc(ref, { balance: increment(value), total: increment(value) });
     if (onDone) onDone(clientId);
     else go('client', clientId);
@@ -35,6 +36,12 @@ export default function AddSale({ go, onDone }) {
           <option key={c.id} value={c.id}>{c.name}</option>
         ))}
       </select>
+      <input
+        value={desc}
+        onChange={e => setDesc(e.target.value)}
+        placeholder="Descripci\u00f3n"
+        required
+      />
       <input
         value={amount}
         onChange={e => setAmount(e.target.value)}
