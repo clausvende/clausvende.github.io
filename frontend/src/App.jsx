@@ -55,7 +55,7 @@ function MainContent({ page, setPage }) {
         </nav>
       </aside>
       <div className="flex-1 flex flex-col md:ml-60">
-        <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed w-full md:relative md:ml-60">
+        <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed top-0 left-0 right-0 md:left-60">
           <button className="md:hidden" onClick={() => setOpen(!open)}>
             ☰
           </button>
