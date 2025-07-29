@@ -44,7 +44,7 @@ export default function SalesList() {
       <ul className="list">
         {filtered.map(s => (
           <li key={`${s.clientId}-${s.id}`}>
-            {s.clientName} - {new Date(s.date).toLocaleDateString()} - ${s.amount}
+            {s.clientName} - {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
           </li>
         ))}
       </ul>

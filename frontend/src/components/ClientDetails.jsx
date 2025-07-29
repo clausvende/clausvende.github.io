@@ -1,12 +1,15 @@
 import { collection, addDoc, onSnapshot, doc, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
+import AddClient from './AddClient';
+import Modal from './Modal';
 
 export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
   const [payments, setPayments] = useState([]);
   const [sales, setSales] = useState([]);
   const [amount, setAmount] = useState('');
+  const [editMode, setEditMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editAmount, setEditAmount] = useState('');
   const [editingSaleId, setEditingSaleId] = useState(null);
@@ -97,12 +100,22 @@ export default function ClientDetails({ id, go }) {
     });
   };
 
+  const removeClient = async () => {
+    if (!window.confirm('¿Eliminar este cliente?')) return;
+    await deleteDoc(doc(db, 'clients', id));
+    go('clients');
+  };
+
   if (!client) return <p>Cargando...</p>;
 
   return (
     <div>
       <button onClick={() => go('list')}>Regresar</button>
-      <h2>{client.name}</h2>
+      <h2>
+        {client.name}
+        <button onClick={() => setEditMode(true)}>✏️</button>
+        <button onClick={removeClient}>🗑️</button>
+      </h2>
       <p>Teléfono: {client.phone}</p>
       {client.notes && <p>Observaciones: {client.notes}</p>}
       <p>Deuda actual: ${client.balance || 0}</p>
@@ -127,7 +140,7 @@ export default function ClientDetails({ id, go }) {
               </>
             ) : (
               <>
-                {new Date(s.date).toLocaleDateString()} - ${s.amount}
+                {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
                 <button onClick={() => startEditSale(s)}>Editar</button>
                 <button onClick={() => removeSale(s)}>Eliminar</button>
               </>
@@ -160,6 +173,11 @@ export default function ClientDetails({ id, go }) {
           </li>
         ))}
       </ul>
+      {editMode && (
+        <Modal onClose={() => setEditMode(false)}>
+          <AddClient client={client} onDone={() => setEditMode(false)} />
+        </Modal>
+      )}
     </div>
   );
 }
