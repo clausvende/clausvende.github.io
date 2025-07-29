@@ -50,20 +50,37 @@ export default function SalesList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <button onClick={() => setShow(true)} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <button
+          onClick={() => setShow(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded w-full sm:w-auto"
+        >
           <img src={plus} alt="" className="w-5 h-5" />Nueva venta
         </button>
-        <input
-          className="border rounded px-3 py-2"
-          placeholder="Buscar por cliente"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+        <div className="relative w-full sm:w-auto">
+          <input
+            className="border rounded px-3 py-2 pr-8 w-full"
+            placeholder="Buscar por cliente"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
       <ul className="grid gap-3">
         {filtered.map(s => (
-          <li key={`${s.clientId}-${s.id}`} className="bg-white p-4 rounded shadow flex justify-between items-center">
+          <li
+            key={`${s.clientId}-${s.id}`}
+            className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-blue-600"
+          >
             <span>
               {s.clientName} - {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
             </span>
