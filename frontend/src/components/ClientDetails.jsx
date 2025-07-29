@@ -59,6 +59,7 @@ export default function ClientDetails({ id, go }) {
   };
 
   const removePayment = async p => {
+    if (!window.confirm('¿Eliminar este abono?')) return;
     await deleteDoc(doc(db, 'clients', id, 'payments', p.id));
     await updateDoc(doc(db, 'clients', id), { balance: increment(p.amount) });
   };
@@ -88,6 +89,7 @@ export default function ClientDetails({ id, go }) {
   };
 
   const removeSale = async s => {
+    if (!window.confirm('¿Eliminar esta venta?')) return;
     await deleteDoc(doc(db, 'clients', id, 'sales', s.id));
     await updateDoc(doc(db, 'clients', id), {
       balance: increment(-s.amount),

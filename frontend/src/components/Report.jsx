@@ -1,9 +1,10 @@
-import { collection, getDocs } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
+import { useEffect, useRef, useState } from 'react';
 import { db } from '../firebase';
 
 export default function Report() {
   const [summary, setSummary] = useState({ total: 0, outstanding: 0 });
+  const fileRef = useRef(null);
 
   useEffect(() => {
     const load = async () => {
@@ -20,11 +21,65 @@ export default function Report() {
     load();
   }, []);
 
+  const exportDb = async () => {
+    const data = {};
+    const clientSnap = await getDocs(collection(db, 'clients'));
+    const clients = [];
+    for (const c of clientSnap.docs) {
+      const salesSnap = await getDocs(collection(db, 'clients', c.id, 'sales'));
+      const paymentsSnap = await getDocs(collection(db, 'clients', c.id, 'payments'));
+      clients.push({
+        id: c.id,
+        ...c.data(),
+        sales: salesSnap.docs.map(d => ({ id: d.id, ...d.data() })),
+        payments: paymentsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+      });
+    }
+    data.clients = clients;
+    const usuariosSnap = await getDocs(collection(db, 'usuarios'));
+    data.usuarios = usuariosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const usersSnap = await getDocs(collection(db, 'users'));
+    data.users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'database.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importDb = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (data.clients) {
+      for (const c of data.clients) {
+        await setDoc(doc(db, 'clients', c.id), {
+          name: c.name,
+          phone: c.phone,
+          notes: c.notes,
+          balance: c.balance,
+          total: c.total
+        });
+        if (c.sales) for (const s of c.sales) await setDoc(doc(db, 'clients', c.id, 'sales', s.id), { amount: s.amount, date: s.date });
+        if (c.payments) for (const p of c.payments) await setDoc(doc(db, 'clients', c.id, 'payments', p.id), { amount: p.amount, date: p.date });
+      }
+    }
+    if (data.usuarios) for (const u of data.usuarios) await setDoc(doc(db, 'usuarios', u.id), u);
+    if (data.users) for (const u of data.users) await setDoc(doc(db, 'users', u.id), u);
+    alert('Importación completada');
+  };
+
   return (
     <div>
-      <h2>Reporte Financiero</h2>
+      <h2>Finanzas</h2>
       <p>Total ventas: ${summary.total}</p>
       <p>Saldo pendiente: ${summary.outstanding}</p>
+      <button onClick={exportDb}>Exportar DB</button>
+      <button onClick={() => fileRef.current.click()}>Importar DB</button>
+      <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
     </div>
   );
 }

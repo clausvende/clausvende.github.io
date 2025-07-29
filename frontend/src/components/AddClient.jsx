@@ -2,7 +2,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { db } from '../firebase';
 
-export default function AddClient({ go }) {
+export default function AddClient({ go, onDone }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
@@ -15,7 +15,8 @@ export default function AddClient({ go }) {
       notes,
       balance: 0,
     });
-    go('list');
+    if (onDone) onDone();
+    else go('list');
   };
 
   return (
