@@ -53,7 +53,19 @@ function MainContent({ page, setPage }) {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20`}>
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 md:hidden z-10"
+          onClick={() => setOpen(false)}
+        />
+      )}
+      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20 relative`}>
+        <button
+          className="md:hidden absolute top-2 right-2 text-2xl"
+          onClick={() => setOpen(false)}
+        >
+          ×
+        </button>
         <h1 className="text-lg font-semibold mb-4">Menú</h1>
         <nav className="flex flex-col gap-2">
           <button onClick={() => go('sales')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
