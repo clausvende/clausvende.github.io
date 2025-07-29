@@ -71,9 +71,12 @@ export default function ClientList({ go }) {
           return (
             <li
               key={c.id}
-              className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-blue-600"
+              className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-600"
             >
-              <span className="font-medium">{c.name} - deuda: ${c.balance || 0}</span>
+              <div className="flex-1">
+                <p className="font-medium">{c.name}</p>
+                <p className="text-sm text-gray-600">Deuda: ${c.balance || 0}</p>
+              </div>
               <span className="flex gap-1">
                 <button onClick={() => go('client', c.id)}>
                   <img src={eye} alt="ver" className="icon" />

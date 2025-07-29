@@ -134,9 +134,11 @@ export default function ClientDetails({ id, go }) {
           <img src={trash} alt="eliminar" className="icon" />
         </button>
       </h2>
-      <p>Teléfono: {client.phone}</p>
-      {client.notes && <p>Observaciones: {client.notes}</p>}
-      <p>Deuda actual: ${client.balance || 0}</p>
+      <p className="text-gray-800 dark:text-gray-200">Teléfono: {client.phone}</p>
+      {client.notes && (
+        <p className="text-gray-800 dark:text-gray-200">Observaciones: {client.notes}</p>
+      )}
+      <p className="text-gray-800 dark:text-gray-200">Deuda actual: ${client.balance || 0}</p>
       <form onSubmit={addPayment} className="flex gap-2">
         <input className="border rounded px-3 py-2 flex-1" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
         <button type="submit" className="bg-blue-600 text-white px-3 py-2 rounded">Registrar abono</button>

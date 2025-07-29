@@ -79,11 +79,14 @@ export default function SalesList() {
         {filtered.map(s => (
           <li
             key={`${s.clientId}-${s.id}`}
-            className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-blue-600"
+            className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-600"
           >
-            <span>
-              {s.clientName} - {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
-            </span>
+            <div className="flex-1">
+              <p className="font-medium">{s.clientName}</p>
+              <p className="text-sm text-gray-600">
+                {new Date(s.date).toLocaleDateString()} - ${s.amount}
+              </p>
+            </div>
             <span className="flex gap-1">
               <button onClick={() => setEditSale(s)}>
                 <img src={editIcon} alt="editar" className="icon" />
