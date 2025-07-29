@@ -5,6 +5,9 @@ import Report from './components/Report'
 import SalesList from './components/SalesList'
 import { AuthProvider, useAuth } from './AuthProvider'
 import Login from './Login'
+import cart from './assets/icons/cart.svg'
+import users from './assets/icons/users.svg'
+import dollar from './assets/icons/dollar.svg'
 import './App.css'
 
 function MainContent({ page, setPage }) {
@@ -44,11 +47,17 @@ function MainContent({ page, setPage }) {
         <button onClick={logout}>Cerrar sesión</button>
       </header>
       <nav>
-        <button onClick={() => go('sales')}>🛒 Ventas</button>
+        <button onClick={() => go('sales')}>
+          <img src={cart} alt="" className="icon" />Ventas
+        </button>
         <span className="sep">|</span>
-        <button onClick={() => go('clients')}>👥 Clientes</button>
+        <button onClick={() => go('clients')}>
+          <img src={users} alt="" className="icon" />Clientes
+        </button>
         <span className="sep">|</span>
-        <button onClick={() => go('finance')}>💰 Finanzas</button>
+        <button onClick={() => go('finance')}>
+          <img src={dollar} alt="" className="icon" />Finanzas
+        </button>
       </nav>
       <div className="container">
         {content}
