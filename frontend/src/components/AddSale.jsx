@@ -8,6 +8,10 @@ export default function AddSale({ go, onDone, sale }) {
   const [clientId, setClientId] = useState(sale?.clientId || '');
   const [amount, setAmount] = useState(sale?.amount || '');
   const [desc, setDesc] = useState(sale?.description || '');
+  const [date, setDate] = useState(() => {
+    if (sale?.date) return new Date(sale.date).toISOString().split('T')[0];
+    return new Date().toISOString().split('T')[0];
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -22,23 +26,28 @@ export default function AddSale({ go, onDone, sale }) {
       setClientId(sale.clientId);
       setAmount(sale.amount);
       setDesc(sale.description);
+      setDate(new Date(sale.date).toISOString().split('T')[0]);
     }
   }, [sale]);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!clientId || !amount || !desc) return;
+    if (!clientId || !amount || !desc || !date) return;
     const value = parseFloat(amount);
     const ref = doc(db, 'clients', clientId);
     if (sale) {
       const diff = value - sale.amount;
-      await updateDoc(doc(ref, 'sales', sale.id), { amount: value, description: desc });
+      await updateDoc(doc(ref, 'sales', sale.id), {
+        amount: value,
+        description: desc,
+        date: new Date(date).getTime()
+      });
       if (diff !== 0) {
         await updateDoc(ref, { balance: increment(diff), total: increment(diff) });
       }
     } else {
-      const date = Date.now();
-      await addDoc(collection(ref, 'sales'), { amount: value, description: desc, date });
+      const ts = new Date(date).getTime();
+      await addDoc(collection(ref, 'sales'), { amount: value, description: desc, date: ts });
       await updateDoc(ref, { balance: increment(value), total: increment(value) });
 
       const client = clients.find(c => c.id === clientId);
@@ -47,7 +56,7 @@ export default function AddSale({ go, onDone, sale }) {
         pdf.setFontSize(12);
         pdf.text('Ticket de Venta', 5, 10);
         pdf.text(`Cliente: ${client.name}`, 5, 20);
-        pdf.text(`Fecha: ${new Date(date).toLocaleString()}`, 5, 30);
+        pdf.text(`Fecha: ${new Date(ts).toLocaleString()}`, 5, 30);
         pdf.text(desc, 5, 40);
         pdf.text(`Monto: $${value.toFixed(2)}`, 5, 50);
         pdf.save('ticket.pdf');
@@ -89,6 +98,13 @@ export default function AddSale({ go, onDone, sale }) {
         placeholder="Monto"
         type="number"
         step="0.01"
+        required
+      />
+      <input
+        className="w-full border rounded px-3 py-2"
+        type="date"
+        value={date}
+        onChange={e => setDate(e.target.value)}
         required
       />
       <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">{sale ? 'Guardar cambios' : 'Registrar venta'}</button>

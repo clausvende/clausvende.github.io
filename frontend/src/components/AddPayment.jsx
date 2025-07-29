@@ -4,14 +4,15 @@ import { db } from '../firebase';
 
 export default function AddPayment({ clientId, onDone }) {
   const [amount, setAmount] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const handleSubmit = async e => {
     e.preventDefault();
     const value = parseFloat(amount);
-    if (isNaN(value)) return;
+    if (isNaN(value) || !date) return;
     await addDoc(collection(db, 'clients', clientId, 'payments'), {
       amount: value,
-      date: Date.now(),
+      date: new Date(date).getTime(),
     });
     await updateDoc(doc(db, 'clients', clientId), {
       balance: increment(-value),
@@ -29,6 +30,13 @@ export default function AddPayment({ clientId, onDone }) {
         placeholder="Monto del abono"
         type="number"
         step="0.01"
+        required
+      />
+      <input
+        className="w-full border rounded px-3 py-2"
+        type="date"
+        value={date}
+        onChange={e => setDate(e.target.value)}
         required
       />
       <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Guardar</button>
