@@ -58,7 +58,7 @@ export default function ClientList({ go }) {
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-700"
             >
               ×
             </button>
@@ -75,7 +75,7 @@ export default function ClientList({ go }) {
             >
               <div className="flex-1">
                 <p className="font-medium">{c.name}</p>
-                <p className="text-sm text-gray-600">Deuda: ${c.balance || 0}</p>
+                <p className="text-sm text-gray-800">Deuda: ${c.balance || 0}</p>
               </div>
               <span className="flex gap-1">
                 <button onClick={() => go('client', c.id)}>

@@ -68,7 +68,7 @@ export default function SalesList() {
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-700"
             >
               ×
             </button>
@@ -83,7 +83,7 @@ export default function SalesList() {
           >
             <div className="flex-1">
               <p className="font-medium">{s.clientName}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-800">
                 {new Date(s.date).toLocaleDateString()} - ${s.amount}
               </p>
             </div>
