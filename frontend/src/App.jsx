@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import ClientList from './components/ClientList'
 import ClientDetails from './components/ClientDetails'
 import Report from './components/Report'
@@ -10,7 +10,7 @@ import users from './assets/icons/users.svg'
 import dollar from './assets/icons/dollar.svg'
 import './App.css'
 
-function MainContent({ page, setPage, dark, toggleTheme }) {
+function MainContent({ page, setPage }) {
   const { user, role, logout } = useAuth()
   const [open, setOpen] = useState(false)
   if (!user) return <Login />
@@ -52,9 +52,6 @@ function MainContent({ page, setPage, dark, toggleTheme }) {
           <button onClick={() => go('finance')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
             <img src={dollar} alt="" className="w-5 h-5" />Finanzas
           </button>
-          <button onClick={toggleTheme} className="px-3 py-2 rounded hover:bg-slate-700 text-left">
-            {dark ? 'Tema Claro' : 'Tema Oscuro'}
-          </button>
         </nav>
       </aside>
       <div className="flex-1 flex flex-col md:ml-60">
@@ -82,16 +79,10 @@ function MainContent({ page, setPage, dark, toggleTheme }) {
 
 export default function App() {
   const [page, setPage] = useState({ name: 'clients' })
-  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark')
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark)
-    localStorage.setItem('theme', dark ? 'dark' : 'light')
-  }, [dark])
 
   return (
     <AuthProvider>
-      <MainContent page={page} setPage={setPage} dark={dark} toggleTheme={() => setDark(!dark)} />
+      <MainContent page={page} setPage={setPage} />
     </AuthProvider>
   )
 }

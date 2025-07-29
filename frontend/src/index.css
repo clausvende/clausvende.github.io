@@ -116,27 +116,3 @@ input:focus {
   margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #1f2937;
-    --text-color: #f9fafb;
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --accent: #06b6d4;
-  }
-  .bg-white {
-    color: #1f2937;
-  }
-}
-
-/* Manual dark mode class */
-.dark {
-  --bg-color: #1f2937;
-  --text-color: #f9fafb;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --accent: #06b6d4;
-}
-.dark .bg-white {
-  color: #1f2937;
-}
