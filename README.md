@@ -31,3 +31,5 @@ Actualmente el rol sólo se muestra en la interfaz, pero permite distinguir qué
 ## Licencia
 
 Este proyecto se distribuye bajo los términos de la licencia MIT. Consulte el archivo [LICENSE](LICENSE) para más información.
+
+<!-- trigger deploy -->
