@@ -14,8 +14,10 @@ export default function ClientDetails({ id, go }) {
   const [editMode, setEditMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editAmount, setEditAmount] = useState('');
+  const [editDate, setEditDate] = useState('');
   const [editingSaleId, setEditingSaleId] = useState(null);
   const [editSaleAmount, setEditSaleAmount] = useState('');
+  const [editSaleDate, setEditSaleDate] = useState('');
 
   useEffect(() => {
     const unsubClient = onSnapshot(doc(db, 'clients', id), snap => {
@@ -45,17 +47,22 @@ export default function ClientDetails({ id, go }) {
   const startEdit = p => {
     setEditingId(p.id);
     setEditAmount(p.amount);
+    setEditDate(new Date(p.date).toISOString().split('T')[0]);
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setEditAmount('');
+    setEditDate('');
   };
 
   const saveEdit = async p => {
     const newValue = parseFloat(editAmount);
-    if (isNaN(newValue)) return;
-    await updateDoc(doc(db, 'clients', id, 'payments', p.id), { amount: newValue });
+    if (isNaN(newValue) || !editDate) return;
+    await updateDoc(doc(db, 'clients', id, 'payments', p.id), {
+      amount: newValue,
+      date: new Date(editDate).getTime(),
+    });
     const diff = newValue - p.amount;
     if (diff !== 0) {
       await updateDoc(doc(db, 'clients', id), { balance: increment(-diff) });
@@ -72,17 +79,22 @@ export default function ClientDetails({ id, go }) {
   const startEditSale = s => {
     setEditingSaleId(s.id);
     setEditSaleAmount(s.amount);
+    setEditSaleDate(new Date(s.date).toISOString().split('T')[0]);
   };
 
   const cancelEditSale = () => {
     setEditingSaleId(null);
     setEditSaleAmount('');
+    setEditSaleDate('');
   };
 
   const saveEditSale = async s => {
     const newValue = parseFloat(editSaleAmount);
-    if (isNaN(newValue)) return;
-    await updateDoc(doc(db, 'clients', id, 'sales', s.id), { amount: newValue });
+    if (isNaN(newValue) || !editSaleDate) return;
+    await updateDoc(doc(db, 'clients', id, 'sales', s.id), {
+      amount: newValue,
+      date: new Date(editSaleDate).getTime(),
+    });
     const diff = newValue - s.amount;
     if (diff !== 0) {
       await updateDoc(doc(db, 'clients', id), {
@@ -142,6 +154,12 @@ export default function ClientDetails({ id, go }) {
                   value={editSaleAmount}
                   onChange={e => setEditSaleAmount(e.target.value)}
                 />
+                <input
+                  className="border rounded px-2 py-1 mr-2"
+                  type="date"
+                  value={editSaleDate}
+                  onChange={e => setEditSaleDate(e.target.value)}
+                />
                 <button onClick={() => saveEditSale(s)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
                 <button onClick={cancelEditSale} className="px-2 py-1 rounded border">Cancelar</button>
               </>
@@ -171,6 +189,12 @@ export default function ClientDetails({ id, go }) {
                   step="0.01"
                   value={editAmount}
                   onChange={e => setEditAmount(e.target.value)}
+                />
+                <input
+                  className="border rounded px-2 py-1 mr-2"
+                  type="date"
+                  value={editDate}
+                  onChange={e => setEditDate(e.target.value)}
                 />
                 <button onClick={() => saveEdit(p)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
                 <button onClick={cancelEdit} className="px-2 py-1 rounded border">Cancelar</button>
