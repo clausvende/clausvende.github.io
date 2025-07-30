@@ -107,7 +107,7 @@ export default function AddSale({ go, onDone, sale }) {
         onChange={e => setDate(e.target.value)}
         required
       />
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">{sale ? 'Guardar cambios' : 'Registrar venta'}</button>
+      <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">{sale ? 'Guardar cambios' : 'Registrar venta'}</button>
     </form>
   );
 }

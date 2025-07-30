@@ -124,7 +124,7 @@ export default function ClientDetails({ id, go }) {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => go('list')} className="text-blue-600">Regresar</button>
+      <button onClick={() => go('list')} className="text-blue-500">Regresar</button>
       <h2 className="text-lg font-semibold flex items-center gap-2">
         {client.name}
         <button onClick={() => setEditMode(true)}>
@@ -141,7 +141,7 @@ export default function ClientDetails({ id, go }) {
       <p className="text-gray-800">Deuda actual: ${client.balance || 0}</p>
       <form onSubmit={addPayment} className="flex gap-2">
         <input className="border rounded px-3 py-2 flex-1" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
-        <button type="submit" className="bg-blue-600 text-white px-3 py-2 rounded">Registrar abono</button>
+        <button type="submit" className="bg-blue-500 text-white px-3 py-2 rounded">Registrar abono</button>
       </form>
       <h3 className="font-semibold">Ventas</h3>
       <ul className="grid gap-2">
@@ -162,7 +162,7 @@ export default function ClientDetails({ id, go }) {
                   value={editSaleDate}
                   onChange={e => setEditSaleDate(e.target.value)}
                 />
-                <button onClick={() => saveEditSale(s)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                <button onClick={() => saveEditSale(s)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
                 <button onClick={cancelEditSale} className="px-2 py-1 rounded border">Cancelar</button>
               </>
             ) : (
@@ -198,7 +198,7 @@ export default function ClientDetails({ id, go }) {
                   value={editDate}
                   onChange={e => setEditDate(e.target.value)}
                 />
-                <button onClick={() => saveEdit(p)} className="bg-blue-600 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                <button onClick={() => saveEdit(p)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
                 <button onClick={cancelEdit} className="px-2 py-1 rounded border">Cancelar</button>
               </>
             ) : (

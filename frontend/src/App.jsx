@@ -59,34 +59,38 @@ function MainContent({ page, setPage }) {
           onClick={() => setOpen(false)}
         />
       )}
-      <aside className={`bg-slate-800 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20`}>
+      <aside className={`bg-blue-900 text-white w-60 p-4 space-y-2 fixed inset-y-0 left-0 transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 z-20`}>
         <button
           className="md:hidden absolute top-2 right-2 text-2xl"
           onClick={() => setOpen(false)}
         >
           ×
         </button>
-        <h1 className="text-lg font-semibold mb-4">Menú</h1>
+        <img src="/assets/logo.png" alt="Claus Vende" className="h-10 mx-auto mb-4" />
+        <h1 className="text-lg font-semibold mb-4 text-center">Menú</h1>
         <nav className="flex flex-col gap-2">
-          <button onClick={() => go('sales')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+          <button onClick={() => go('sales')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-500 text-left">
             <img src={cart} alt="" className="w-5 h-5" />Ventas
           </button>
-          <button onClick={() => go('clients')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+          <button onClick={() => go('clients')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-500 text-left">
             <img src={users} alt="" className="w-5 h-5" />Clientes
           </button>
-          <button onClick={() => go('finance')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-700 text-left">
+          <button onClick={() => go('finance')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-500 text-left">
             <img src={dollar} alt="" className="w-5 h-5" />Finanzas
           </button>
         </nav>
       </aside>
       <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
         <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed top-0 left-0 right-0 md:left-60 md:right-4">
-          <button
-            className="md:hidden text-2xl mr-4"
-            onClick={() => setOpen(!open)}
-          >
-            ☰
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              className="md:hidden text-2xl mr-2"
+              onClick={() => setOpen(!open)}
+            >
+              ☰
+            </button>
+            <img src="/assets/logo.png" alt="Claus Vende" className="h-8" />
+          </div>
           <div className="flex items-center gap-2">
             <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
             <div className="leading-tight">

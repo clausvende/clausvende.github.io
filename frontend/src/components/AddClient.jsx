@@ -58,7 +58,7 @@ export default function AddClient({ go, onDone, client }) {
         onChange={e => setNotes(e.target.value)}
         placeholder="Observaciones"
       />
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Guardar</button>
+      <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">Guardar</button>
     </form>
   );
 }

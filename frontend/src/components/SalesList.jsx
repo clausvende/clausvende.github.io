@@ -53,7 +53,7 @@ export default function SalesList() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <button
           onClick={() => setShow(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded w-full sm:w-auto"
+          className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded w-full sm:w-auto"
         >
           <img src={plus} alt="" className="w-5 h-5" />Nueva venta
         </button>
@@ -79,7 +79,7 @@ export default function SalesList() {
         {filtered.map(s => (
           <li
             key={`${s.clientId}-${s.id}`}
-            className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-600"
+            className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-500"
           >
             <div className="flex-1">
               <p className="font-medium">{s.clientName}</p>
