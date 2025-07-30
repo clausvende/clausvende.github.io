@@ -87,32 +87,32 @@ function MainContent({ page, setPage }) {
           </button>
         </nav>
       </aside>
-      <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
-        <header className="sticky top-0 bg-white shadow z-10">
-          <div className="px-4 py-2 text-center">
-            <img src="/assets/logo.png" alt="Claus Vende" className="h-8 mx-auto" />
-          </div>
-          <div className="flex items-center justify-between px-4 py-2 border-t">
+      <header className="sticky top-0 bg-white shadow z-10 md:pl-60 md:pr-4">
+        <div className="px-4 py-2 text-center">
+          <img src="/assets/logo.png" alt="Claus Vende" className="h-8 mx-auto" />
+        </div>
+        <div className="flex items-center justify-between px-4 py-2 border-t">
+          <div className="flex items-center gap-2">
+            <button
+              className="md:hidden text-2xl mr-2"
+              onClick={() => setOpen(!open)}
+            >
+              ☰
+            </button>
             <div className="flex items-center gap-2">
-              <button
-                className="md:hidden text-2xl mr-2"
-                onClick={() => setOpen(!open)}
-              >
-                ☰
-              </button>
-              <div className="flex items-center gap-2">
-                <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
-                <div className="leading-tight">
-                  <p className="font-semibold leading-tight md:hidden">{nombres}</p>
-                  <p className="font-semibold leading-tight md:hidden">{apellidos}</p>
-                  <p className="font-semibold leading-none hidden md:block">{user.displayName}</p>
-                  <p className="text-xs text-gray-700">{role}</p>
-                </div>
+              <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
+              <div className="leading-tight">
+                <p className="font-semibold leading-tight md:hidden">{nombres}</p>
+                <p className="font-semibold leading-tight md:hidden">{apellidos}</p>
+                <p className="font-semibold leading-none hidden md:block">{user.displayName}</p>
+                <p className="text-xs text-gray-700">{role}</p>
               </div>
             </div>
-            <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
           </div>
-        </header>
+          <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
+        </div>
+      </header>
+      <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
         <main className="p-4 mt-4 flex-1">{content}</main>
       </div>
     </div>
