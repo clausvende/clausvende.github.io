@@ -113,7 +113,7 @@ function MainContent({ page, setPage }) {
             <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
           </div>
         </header>
-        <main className="p-4 pt-28 md:pt-24 flex-1">{content}</main>
+        <main className="p-4 pt-36 md:pt-36 flex-1">{content}</main>
       </div>
     </div>
   )
