@@ -88,28 +88,32 @@ function MainContent({ page, setPage }) {
         </nav>
       </aside>
       <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
-        <header className="flex items-center justify-between bg-white shadow px-4 py-2 fixed top-0 left-0 right-0 md:left-60 md:right-4">
-          <div className="flex items-center gap-2">
-            <button
-              className="md:hidden text-2xl mr-2"
-              onClick={() => setOpen(!open)}
-            >
-              ☰
-            </button>
+        <header className="fixed top-0 left-0 right-0 md:left-60 md:right-4 bg-white shadow">
+          <div className="px-4 py-2 text-center">
+            <img src="/assets/logo.png" alt="Claus Vende" className="h-8 mx-auto" />
+          </div>
+          <div className="flex items-center justify-between px-4 py-2 border-t">
             <div className="flex items-center gap-2">
-              <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
-              <div className="leading-tight">
-                <p className="font-semibold leading-tight md:hidden">{nombres}</p>
-                <p className="font-semibold leading-tight md:hidden">{apellidos}</p>
-                <p className="font-semibold leading-none hidden md:block">{user.displayName}</p>
-                <p className="text-xs text-gray-700">{role}</p>
+              <button
+                className="md:hidden text-2xl mr-2"
+                onClick={() => setOpen(!open)}
+              >
+                ☰
+              </button>
+              <div className="flex items-center gap-2">
+                <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
+                <div className="leading-tight">
+                  <p className="font-semibold leading-tight md:hidden">{nombres}</p>
+                  <p className="font-semibold leading-tight md:hidden">{apellidos}</p>
+                  <p className="font-semibold leading-none hidden md:block">{user.displayName}</p>
+                  <p className="text-xs text-gray-700">{role}</p>
+                </div>
               </div>
             </div>
+            <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
           </div>
-          <img src="/assets/logo.png" alt="Claus Vende" className="h-8" />
-          <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
         </header>
-        <main className="p-4 mt-20 md:mt-16 flex-1">{content}</main>
+        <main className="p-4 mt-24 md:mt-20 flex-1">{content}</main>
       </div>
     </div>
   )
