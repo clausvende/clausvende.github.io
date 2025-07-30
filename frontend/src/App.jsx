@@ -88,7 +88,7 @@ function MainContent({ page, setPage }) {
         </nav>
       </aside>
       <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
-        <header className="fixed top-0 left-0 right-0 md:left-60 md:right-4 bg-white shadow">
+        <header className="sticky top-0 bg-white shadow z-10">
           <div className="px-4 py-2 text-center">
             <img src="/assets/logo.png" alt="Claus Vende" className="h-8 mx-auto" />
           </div>
@@ -113,7 +113,7 @@ function MainContent({ page, setPage }) {
             <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
           </div>
         </header>
-        <main className="p-4 mt-24 md:mt-20 flex-1">{content}</main>
+        <main className="p-4 mt-4 flex-1">{content}</main>
       </div>
     </div>
   )
