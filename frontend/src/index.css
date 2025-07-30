@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 :root {
-  --bg-color: #f4f7fa;
-  --text-color: #1f2937;
-  --primary: #1e40af;
-  --primary-dark: #1e3a8a;
-  --accent: #0284c7;
+  --bg-color: #f3f4f6;
+  --text-color: #374151;
+  --primary: #1e3a8a;
+  --primary-dark: #1e40af;
+  --secondary: #3b82f6;
+  --accent: var(--secondary);
 
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

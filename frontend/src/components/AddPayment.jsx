@@ -39,7 +39,7 @@ export default function AddPayment({ clientId, onDone }) {
         onChange={e => setDate(e.target.value)}
         required
       />
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Guardar</button>
+      <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">Guardar</button>
     </form>
   );
 }

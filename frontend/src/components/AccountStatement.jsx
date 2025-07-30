@@ -62,7 +62,7 @@ export default function AccountStatement({ clientId }) {
         <p><strong>Total compras:</strong> ${totalSales}</p>
         <p><strong>Total abonos:</strong> ${totalPayments}</p>
       </div>
-      <button onClick={exportPdf} className="bg-blue-600 text-white px-3 py-2 rounded">Generar PDF</button>
+      <button onClick={exportPdf} className="bg-blue-500 text-white px-3 py-2 rounded">Generar PDF</button>
     </div>
   );
 }

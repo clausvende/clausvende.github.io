@@ -100,8 +100,8 @@ export default function Report() {
       <p>Total ventas: ${summary.total}</p>
       <p>Saldo pendiente: ${summary.outstanding}</p>
       <div className="flex gap-2">
-        <button onClick={exportDb} className="bg-blue-600 text-white px-3 py-1 rounded">Exportar DB</button>
-        <button onClick={() => fileRef.current.click()} className="bg-blue-600 text-white px-3 py-1 rounded">Importar DB</button>
+        <button onClick={exportDb} className="bg-blue-500 text-white px-3 py-1 rounded">Exportar DB</button>
+        <button onClick={() => fileRef.current.click()} className="bg-blue-500 text-white px-3 py-1 rounded">Importar DB</button>
       </div>
       <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
       {debtors.length > 0 && (
@@ -111,7 +111,7 @@ export default function Report() {
             {debtors.map(d => {
               const cleanPhone = (d.phone || '').replace(/\D/g, '');
               return (
-                <li key={d.id} className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-red-600">
+                <li key={d.id} className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-red-500">
                   <span className="font-medium">{d.name} - ${d.balance}</span>
                   <span className="flex gap-1">
                     <button onClick={() => setPayClientId(d.id)}>
