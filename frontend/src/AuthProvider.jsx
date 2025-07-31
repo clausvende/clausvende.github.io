@@ -20,16 +20,24 @@ export function AuthProvider({ children }) {
           setRole(null)
           return
         }
-        setUser(u)
         const ref = doc(db, 'users', u.uid)
         const snap = await getDoc(ref)
+        let data
         if (snap.exists()) {
-          setRole(snap.data().role)
-          if (!snap.data().email) await setDoc(ref, { email: u.email, displayName: u.displayName }, { merge: true })
+          data = snap.data()
+          setRole(data.role)
+          if (!data.email) {
+            await setDoc(ref, { email: u.email, displayName: u.displayName, photoURL: u.photoURL }, { merge: true })
+            data.email = u.email
+            data.displayName = data.displayName || u.displayName
+            data.photoURL = u.photoURL
+          }
         } else {
-          await setDoc(ref, { role: 'Vendedor', email: u.email, displayName: u.displayName })
+          data = { role: 'Vendedor', email: u.email, displayName: u.displayName, photoURL: u.photoURL }
+          await setDoc(ref, data)
           setRole('Vendedor')
         }
+        setUser({ ...u, ...data, id: u.uid })
       } else {
         setUser(null)
         setRole(null)

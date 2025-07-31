@@ -40,8 +40,16 @@ export default function UsersList() {
         <h3 className="text-lg font-semibold">Usuarios Registrados</h3>
         <ul className="grid gap-2">
           {users.map(u => (
-            <li key={u.id} className="card">
-              <span className="flex-1">{u.displayName || u.email || u.id}</span>
+            <li key={u.id} className="card sm:flex-row sm:items-center">
+              <img
+                src={u.photoURL || '/vite.svg'}
+                alt="avatar"
+                className="w-12 h-12 rounded-full"
+              />
+              <div className="flex-1">
+                <p className="font-semibold">{u.displayName || u.email || u.id}</p>
+                <p className="text-sm text-gray-600">{u.email}</p>
+              </div>
               <select
                 value={u.role}
                 onChange={e => changeRole(u.id, e.target.value)}
