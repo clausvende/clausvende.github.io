@@ -12,6 +12,7 @@ import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
 import plus from '../assets/icons/plus.svg';
 import dollar from '../assets/icons/dollar.svg';
+import { formatMoney } from '../utils';
 
 export default function ClientList({ go }) {
   const [clients, setClients] = useState([]);
@@ -72,7 +73,7 @@ export default function ClientList({ go }) {
             <li key={c.id} className="card border-l-4 border-blue-500">
               <div className="flex-1">
                 <p className="font-semibold">{c.name}</p>
-                <p className="text-sm text-gray-800">Deuda: ${c.balance || 0}</p>
+                <p className="text-sm text-gray-800">Deuda: ${`$${formatMoney(c.balance)}`}</p>
               </div>
               <span className="actions">
                 <button onClick={() => go('client', c.id)} title="Ver">

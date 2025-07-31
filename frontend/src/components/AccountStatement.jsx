@@ -89,9 +89,9 @@ export default function AccountStatement({ clientId }) {
       .forEach(s => {
         pdf.text(String(new Date(s.date).toLocaleDateString()), col[0], y);
         pdf.text(String(s.description), col[1], y);
-        pdf.text(String(formatMoney(s.amount)), col[2], y, { align: 'right' });
-        pdf.text(String(formatMoney(s.abonado)), col[3], y, { align: 'right' });
-        pdf.text(String(s.pagada ? '✔' : formatMoney(s.pendiente)), col[4], y, { align: 'right' });
+        pdf.text(String(`$${formatMoney(s.amount)}`), col[2], y, { align: 'right' });
+        pdf.text(String(`$${formatMoney(s.abonado)}`), col[3], y, { align: 'right' });
+        pdf.text(String(s.pagada ? '✔' : `$${formatMoney(s.pendiente)}`), col[4], y, { align: 'right' });
         y += 4;
         if (y > pageHeight - margin) {
           pdf.addPage();
@@ -119,7 +119,7 @@ export default function AccountStatement({ clientId }) {
       .forEach(p => {
         pdf.text(String(new Date(p.date).toLocaleDateString()), pcol[0], y);
         if (p.saleDescription) pdf.text(String(p.saleDescription), pcol[1], y);
-        pdf.text(String(formatMoney(p.amount)), pcol[2], y, { align: 'right' });
+        pdf.text(String(`$${formatMoney(p.amount)}`), pcol[2], y, { align: 'right' });
         y += 4;
         if (y > pageHeight - margin) {
           pdf.addPage();
