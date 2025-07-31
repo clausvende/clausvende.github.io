@@ -1,15 +1,13 @@
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { formatMoney, applyPaymentsToSales } from '../utils';
+import { formatMoney, applyPaymentsToSales, mapPaymentsToSales } from '../utils';
 
 export default function AccountStatement({ clientId }) {
   const [client, setClient] = useState(null);
   const [sales, setSales] = useState([]);
   const [payments, setPayments] = useState([]);
-  const contentRef = useRef(null);
 
   useEffect(() => {
     const load = async () => {
@@ -21,20 +19,117 @@ export default function AccountStatement({ clientId }) {
       const paySnap = await getDocs(collection(db, 'clients', clientId, 'payments'));
       const payData = paySnap.docs.map(d => ({ id: d.id, ...d.data() }));
       applyPaymentsToSales(salesData, payData);
+      const mappedPays = mapPaymentsToSales(salesData, payData);
       setSales(salesData);
-      setPayments(payData);
+      setPayments(mappedPays);
     };
     load();
   }, [clientId]);
 
-  const exportPdf = async () => {
-    const canvas = await html2canvas(contentRef.current);
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF();
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  const exportPdf = () => {
+    const pdf = new jsPDF({ format: 'a5' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    let y = margin;
+
+    pdf.setFontSize(16);
+    pdf.text('Claudia Vende', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    pdf.setFontSize(12);
+    pdf.text('Estado de Cuenta', pageWidth / 2, y, { align: 'center' });
+    y += 3;
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 6;
+
+    pdf.setFontSize(10);
+    pdf.text(`Nombre: ${client.name}`, margin, y);
+    y += 4;
+    pdf.text(`Teléfono: ${client.phone}`, margin, y);
+    y += 4;
+    pdf.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, y);
+    y += 6;
+
+    pdf.setFontSize(12);
+    pdf.text('Resumen', margin, y);
+    y += 5;
+    pdf.setFontSize(10);
+    const resumen = [
+      ['Total comprado', formatMoney(totalSales)],
+      ['Total abonado', formatMoney(totalPayments)],
+      ['Saldo pendiente', formatMoney(totalSales - totalPayments)],
+    ];
+    pdf.setFont(undefined, 'bold');
+    resumen.forEach(r => {
+      pdf.text(r[0], margin, y);
+      pdf.text(`$${r[1]}`, pageWidth - margin, y, { align: 'right' });
+      y += 4;
+    });
+    pdf.setFont(undefined, 'normal');
+    y += 4;
+
+    pdf.setFontSize(12);
+    pdf.text('Detalle de ventas', margin, y);
+    y += 4;
+    pdf.setFontSize(10);
+    const col = [margin, margin + 30, pageWidth - 55, pageWidth - 35, pageWidth - margin];
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Fecha', col[0], y);
+    pdf.text('Producto', col[1], y);
+    pdf.text('Monto', col[2], y, { align: 'right' });
+    pdf.text('Abonado', col[3], y, { align: 'right' });
+    pdf.text('Saldo', col[4], y, { align: 'right' });
+    pdf.setFont(undefined, 'normal');
+    y += 2;
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 4;
+
+    sales
+      .sort((a, b) => a.date - b.date)
+      .forEach(s => {
+        pdf.text(new Date(s.date).toLocaleDateString(), col[0], y);
+        pdf.text(s.description, col[1], y);
+        pdf.text(formatMoney(s.amount), col[2], y, { align: 'right' });
+        pdf.text(formatMoney(s.abonado), col[3], y, { align: 'right' });
+        pdf.text(s.pagada ? '✔' : formatMoney(s.pendiente), col[4], y, { align: 'right' });
+        y += 4;
+        if (y > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+      });
+
+    y += 6;
+    pdf.setFontSize(12);
+    pdf.text('Detalle de abonos', margin, y);
+    y += 4;
+    pdf.setFontSize(10);
+    const pcol = [margin, margin + 30, pageWidth - margin];
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Fecha', pcol[0], y);
+    pdf.text('Venta', pcol[1], y);
+    pdf.text('Monto', pcol[2], y, { align: 'right' });
+    pdf.setFont(undefined, 'normal');
+    y += 2;
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 4;
+
+    payments
+      .sort((a, b) => a.date - b.date)
+      .forEach(p => {
+        pdf.text(new Date(p.date).toLocaleDateString(), pcol[0], y);
+        if (p.saleDescription) pdf.text(p.saleDescription, pcol[1], y);
+        pdf.text(formatMoney(p.amount), pcol[2], y, { align: 'right' });
+        y += 4;
+        if (y > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+      });
+
+    pdf.setFontSize(9);
+    pdf.text('¡Gracias por su preferencia!', pageWidth / 2, pageHeight - margin, { align: 'center' });
+
     pdf.save(`estado-${client.name}.pdf`);
   };
 
@@ -45,7 +140,7 @@ export default function AccountStatement({ clientId }) {
 
   return (
     <div className="space-y-4">
-      <div ref={contentRef} className="space-y-2">
+      <div className="space-y-2">
         <h2 className="text-lg font-semibold">Estado de cuenta</h2>
         <p><strong>Nombre:</strong> {client.name}</p>
         <p><strong>Teléfono:</strong> {client.phone}</p>

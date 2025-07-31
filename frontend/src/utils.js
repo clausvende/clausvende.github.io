@@ -32,3 +32,33 @@ export function applyPaymentsToSales(sales, payments) {
 
   return sales;
 }
+
+// Retorna los abonos indicando la primera venta a la que se aplicó cada uno
+export function mapPaymentsToSales(sales, payments) {
+  const sortedSales = [...sales].sort((a, b) => a.date - b.date);
+  const result = [...payments]
+    .sort((a, b) => a.date - b.date)
+    .map(p => ({ ...p }));
+
+  let saleIndex = 0;
+  let remainingSale = sortedSales[saleIndex]?.amount || 0;
+
+  for (const p of result) {
+    let remainingPay = p.amount;
+    while (saleIndex < sortedSales.length && remainingPay > 0) {
+      if (!p.saleId) {
+        p.saleId = sortedSales[saleIndex].id;
+        p.saleDescription = sortedSales[saleIndex].description;
+      }
+      const toUse = Math.min(remainingPay, remainingSale);
+      remainingPay -= toUse;
+      remainingSale -= toUse;
+      if (remainingSale === 0) {
+        saleIndex += 1;
+        remainingSale = sortedSales[saleIndex]?.amount || 0;
+      }
+    }
+  }
+
+  return result;
+}
