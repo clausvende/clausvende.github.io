@@ -87,7 +87,7 @@ function MainContent({ page, setPage }) {
           </button>
         </nav>
       </aside>
-      <div className="flex-1 flex flex-col md:ml-60 md:mr-4">
+      <div className="flex-1 flex flex-col">
         <header className="fixed top-0 left-0 right-0 md:left-60 md:right-4 bg-white shadow">
           <div className="px-4 py-2 text-center">
             <img src="/assets/logo.png" alt="Claus Vende" className="h-8 mx-auto" />
