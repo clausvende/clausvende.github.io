@@ -139,37 +139,109 @@ export default function AccountStatement({ clientId }) {
   const totalPayments = payments.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Estado de cuenta</h2>
-        <p><strong>Nombre:</strong> {client.name}</p>
-        <p><strong>Teléfono:</strong> {client.phone}</p>
-        {client.notes && <p><strong>Notas:</strong> {client.notes}</p>}
-        <p><strong>Saldo actual:</strong> ${formatMoney(client.balance)}</p>
-        <h3 className="font-semibold">Ventas</h3>
-        <ul className="list-disc pl-5">
-          {sales
-            .slice()
-            .sort((a, b) => a.date - b.date)
-            .map(s => (
-              <li key={s.id}>
-                {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)} | Abonado: ${formatMoney(s.abonado)} | Pendiente: ${formatMoney(s.pendiente)} | {s.pagada ? 'Pagada' : 'Pendiente'}
-              </li>
-            ))}
-        </ul>
-        <h3 className="font-semibold">Abonos</h3>
-        <ul className="list-disc pl-5">
-          {payments
-            .slice()
-            .sort((a, b) => a.date - b.date)
-            .map(p => (
-              <li key={p.id}>{new Date(p.date).toLocaleDateString()} - ${formatMoney(p.amount)}</li>
-            ))}
-        </ul>
-        <p><strong>Total compras:</strong> ${formatMoney(totalSales)}</p>
-        <p><strong>Total abonos:</strong> ${formatMoney(totalPayments)}</p>
+    <div className="space-y-6 max-w-2xl">
+      <h2 className="text-xl font-bold flex items-center justify-center gap-2">
+        <span role="img" aria-hidden="true">📋</span>
+        Estado de cuenta
+      </h2>
+
+      <div className="bg-gray-50 rounded-lg p-4 grid gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
+        <p><span className="font-semibold">Nombre:</span> {client.name}</p>
+        <p><span className="font-semibold">Teléfono:</span> {client.phone}</p>
+        {client.notes && (
+          <p className="sm:col-span-2"><span className="font-semibold">Notas:</span> {client.notes}</p>
+        )}
+        <p className="sm:col-span-2"><span className="font-semibold">Saldo actual:</span> ${formatMoney(client.balance)}</p>
       </div>
-      <button onClick={exportPdf} className="bg-blue-500 text-white px-3 py-2 rounded">Generar PDF</button>
+
+      <hr className="border-gray-300" />
+
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Ventas</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border border-gray-200">
+            <thead className="bg-gray-100 text-gray-700">
+              <tr>
+                <th className="p-2 text-left">Fecha</th>
+                <th className="p-2 text-left">Descripción</th>
+                <th className="p-2 text-right">Monto</th>
+                <th className="p-2 text-right">Abonado</th>
+                <th className="p-2 text-right">Pendiente</th>
+                <th className="p-2 text-center">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sales
+                .slice()
+                .sort((a, b) => a.date - b.date)
+                .map(s => (
+                  <tr key={s.id} className="border-t">
+                    <td className="p-2">{new Date(s.date).toLocaleDateString()}</td>
+                    <td className="p-2">{s.description}</td>
+                    <td className="p-2 text-right">${formatMoney(s.amount)}</td>
+                    <td className="p-2 text-right">${formatMoney(s.abonado)}</td>
+                    <td className="p-2 text-right">
+                      {s.pagada ? '—' : `$${formatMoney(s.pendiente)}`}
+                    </td>
+                    <td className="p-2 text-center">
+                      {s.pagada ? (
+                        <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">✔ Pagada</span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">⏳ Pendiente</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr className="border-gray-300" />
+
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Abonos</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border border-gray-200">
+            <thead className="bg-gray-100 text-gray-700">
+              <tr>
+                <th className="p-2 text-left">Fecha</th>
+                <th className="p-2 text-left">Venta</th>
+                <th className="p-2 text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments
+                .slice()
+                .sort((a, b) => a.date - b.date)
+                .map(p => (
+                  <tr key={p.id} className="border-t">
+                    <td className="p-2">{new Date(p.date).toLocaleDateString()}</td>
+                    <td className="p-2">{p.saleDescription || ''}</td>
+                    <td className="p-2 text-right">${formatMoney(p.amount)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr className="border-gray-300" />
+
+      <div className="space-y-1 text-right">
+        <p className="font-semibold">Total compras: ${formatMoney(totalSales)}</p>
+        <p className="font-semibold">Total abonos: ${formatMoney(totalPayments)}</p>
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={exportPdf}
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+        >
+          <span role="img" aria-hidden="true">🖨️</span>
+          Generar PDF
+        </button>
+      </div>
     </div>
   );
 }
