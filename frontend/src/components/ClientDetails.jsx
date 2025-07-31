@@ -24,12 +24,20 @@ export default function ClientDetails({ id, go }) {
     const unsubClient = onSnapshot(doc(db, 'clients', id), snap => {
       setClient({ id: snap.id, ...snap.data() });
     });
-    const unsubPay = onSnapshot(collection(db, 'clients', id, 'payments'), snap => {
-      setPayments(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
-    const unsubSales = onSnapshot(collection(db, 'clients', id, 'sales'), snap => {
-      setSales(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
+  const unsubPay = onSnapshot(collection(db, 'clients', id, 'payments'), snap => {
+    setPayments(
+      snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => a.date - b.date)
+    );
+  });
+  const unsubSales = onSnapshot(collection(db, 'clients', id, 'sales'), snap => {
+    setSales(
+      snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => a.date - b.date)
+    );
+  });
     return () => { unsubClient(); unsubPay(); unsubSales(); };
   }, [id]);
 
