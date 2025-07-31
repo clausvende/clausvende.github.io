@@ -263,7 +263,7 @@ export default function Report() {
               const cleanPhone = (d.phone || '').replace(/\D/g, '')
               return (
                 <li key={d.id} className="card border-l-4 border-red-500">
-                  <span className="font-semibold">{`${d.name} - $${d.balance}`}</span>
+                  <span className="font-semibold">{`${d.name} - $${formatMoney(d.balance)}`}</span>
                   <span className="actions">
                     <button onClick={() => setPayClientId(d.id)} title="Abono">
                       <img src={dollar} alt="abono" className="icon" />
