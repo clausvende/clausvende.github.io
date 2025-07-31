@@ -54,12 +54,41 @@ export default function AddSale({ go, onDone, sale }) {
       const client = clients.find(c => c.id === clientId);
       if (client) {
         const pdf = new jsPDF({ unit: 'mm', format: [58, 100] });
-        pdf.setFontSize(12);
-        pdf.text('Ticket de Venta', 5, 10);
-        pdf.text(`Cliente: ${client.name}`, 5, 20);
-        pdf.text(`Fecha: ${new Date(ts).toLocaleString()}`, 5, 30);
-        pdf.text(desc, 5, 40);
-        pdf.text(`Monto: $${formatMoney(value)}`, 5, 50);
+
+        // Encabezado
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(16);
+        pdf.text('Claudia Vende', 29, 8, { align: 'center' });
+        pdf.setLineWidth(0.1);
+        pdf.line(5, 11, 53, 11);
+
+        // Datos del cliente
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        pdf.text(`Cliente: ${client.name}`, 5, 17);
+        pdf.text(`Fecha: ${new Date(ts).toLocaleString()}`, 5, 23);
+        pdf.line(5, 26, 53, 26);
+
+        // Detalle de la venta
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Descripción', 5, 32);
+        pdf.text('Monto', 53, 32, { align: 'right' });
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(desc, 5, 38);
+        pdf.text(`$${formatMoney(value)}`, 53, 38, { align: 'right' });
+        pdf.line(5, 44, 53, 44);
+
+        // Total
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('TOTAL:', 40, 50, { align: 'right' });
+        pdf.setFontSize(14);
+        pdf.text(`$${formatMoney(value)}`, 53, 50, { align: 'right' });
+
+        // Pie de página
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.text('¡Gracias por tu compra!', 29, 96, { align: 'center' });
+
         pdf.save('ticket.pdf');
       }
     }
