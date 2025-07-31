@@ -43,11 +43,11 @@ export default function AccountStatement({ clientId }) {
     y += 6;
 
     pdf.setFontSize(10);
-    pdf.text(`Nombre: ${client.name}`, margin, y);
+    pdf.text(String(`Nombre: ${client.name}`), margin, y);
     y += 4;
-    pdf.text(`Teléfono: ${client.phone}`, margin, y);
+    pdf.text(String(`Teléfono: ${client.phone}`), margin, y);
     y += 4;
-    pdf.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, y);
+    pdf.text(String(`Fecha: ${new Date().toLocaleDateString()}`), margin, y);
     y += 6;
 
     pdf.setFontSize(12);
@@ -61,8 +61,8 @@ export default function AccountStatement({ clientId }) {
     ];
     pdf.setFont(undefined, 'bold');
     resumen.forEach(r => {
-      pdf.text(r[0], margin, y);
-      pdf.text(`$${r[1]}`, pageWidth - margin, y, { align: 'right' });
+      pdf.text(String(r[0]), margin, y);
+      pdf.text(String(`$${r[1]}`), pageWidth - margin, y, { align: 'right' });
       y += 4;
     });
     pdf.setFont(undefined, 'normal');
@@ -87,11 +87,11 @@ export default function AccountStatement({ clientId }) {
     sales
       .sort((a, b) => a.date - b.date)
       .forEach(s => {
-        pdf.text(new Date(s.date).toLocaleDateString(), col[0], y);
-        pdf.text(s.description, col[1], y);
-        pdf.text(formatMoney(s.amount), col[2], y, { align: 'right' });
-        pdf.text(formatMoney(s.abonado), col[3], y, { align: 'right' });
-        pdf.text(s.pagada ? '✔' : formatMoney(s.pendiente), col[4], y, { align: 'right' });
+        pdf.text(String(new Date(s.date).toLocaleDateString()), col[0], y);
+        pdf.text(String(s.description), col[1], y);
+        pdf.text(String(formatMoney(s.amount)), col[2], y, { align: 'right' });
+        pdf.text(String(formatMoney(s.abonado)), col[3], y, { align: 'right' });
+        pdf.text(String(s.pagada ? '✔' : formatMoney(s.pendiente)), col[4], y, { align: 'right' });
         y += 4;
         if (y > pageHeight - margin) {
           pdf.addPage();
@@ -117,9 +117,9 @@ export default function AccountStatement({ clientId }) {
     payments
       .sort((a, b) => a.date - b.date)
       .forEach(p => {
-        pdf.text(new Date(p.date).toLocaleDateString(), pcol[0], y);
-        if (p.saleDescription) pdf.text(p.saleDescription, pcol[1], y);
-        pdf.text(formatMoney(p.amount), pcol[2], y, { align: 'right' });
+        pdf.text(String(new Date(p.date).toLocaleDateString()), pcol[0], y);
+        if (p.saleDescription) pdf.text(String(p.saleDescription), pcol[1], y);
+        pdf.text(String(formatMoney(p.amount)), pcol[2], y, { align: 'right' });
         y += 4;
         if (y > pageHeight - margin) {
           pdf.addPage();
