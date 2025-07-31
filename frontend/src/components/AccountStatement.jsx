@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { db } from '../firebase';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { formatMoney } from '../utils';
+import { formatMoney, applyPaymentsToSales } from '../utils';
 
 export default function AccountStatement({ clientId }) {
   const [client, setClient] = useState(null);
@@ -17,9 +17,12 @@ export default function AccountStatement({ clientId }) {
       if (!cSnap.exists()) return;
       setClient({ id: cSnap.id, ...cSnap.data() });
       const salesSnap = await getDocs(collection(db, 'clients', clientId, 'sales'));
-      setSales(salesSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const salesData = salesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       const paySnap = await getDocs(collection(db, 'clients', clientId, 'payments'));
-      setPayments(paySnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const payData = paySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      applyPaymentsToSales(salesData, payData);
+      setSales(salesData);
+      setPayments(payData);
     };
     load();
   }, [clientId]);
@@ -51,7 +54,9 @@ export default function AccountStatement({ clientId }) {
         <h3 className="font-semibold">Ventas</h3>
         <ul className="list-disc pl-5">
           {sales.map(s => (
-            <li key={s.id}>{new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)}</li>
+            <li key={s.id}>
+              {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)} | Abonado: ${formatMoney(s.abonado)} | Pendiente: ${formatMoney(s.pendiente)} | {s.pagada ? 'Pagada' : 'Pendiente'}
+            </li>
           ))}
         </ul>
         <h3 className="font-semibold">Abonos</h3>
