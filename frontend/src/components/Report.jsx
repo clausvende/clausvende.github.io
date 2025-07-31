@@ -253,11 +253,6 @@ export default function Report() {
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <button onClick={exportDb} className="bg-blue-500 text-white px-3 py-1 rounded">Exportar DB</button>
-        <button onClick={() => fileRef.current.click()} className="bg-blue-500 text-white px-3 py-1 rounded">Importar DB</button>
-      </div>
-      <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
 
       {debtors.length > 0 && (
         <div className="space-y-2">
@@ -289,6 +284,12 @@ export default function Report() {
           <AddPayment clientId={payClientId} onDone={() => { setPayClientId(null); load() }} />
         </Modal>
       )}
+
+      <div className="flex gap-2">
+        <button onClick={exportDb} className="bg-blue-500 text-white px-3 py-1 rounded">Exportar DB</button>
+        <button onClick={() => fileRef.current.click()} className="bg-blue-500 text-white px-3 py-1 rounded">Importar DB</button>
+      </div>
+      <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
     </div>
   )
 }
