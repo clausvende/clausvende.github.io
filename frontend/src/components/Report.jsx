@@ -70,7 +70,7 @@ export default function Report() {
         if (!lastPayment && sales.length) lastPayment = sales[sales.length - 1].date
         if (now - lastPayment >= monthMs) {
           overdueBalance += balance
-          overdueClients.push({ id: clientId, name, phone: data.phone, balance })
+          overdueClients.push({ id: clientId, name, phone: data.phone, balance, lastPayment })
         } else {
           dueBalance += balance
         }
@@ -263,7 +263,10 @@ export default function Report() {
               const cleanPhone = (d.phone || '').replace(/\D/g, '')
               return (
                 <li key={d.id} className="card border-l-4 border-red-500">
-                  <span className="font-semibold">{`${d.name} - $${formatMoney(d.balance)}`}</span>
+                  <div className="flex-1">
+                    <p className="font-semibold">{`${d.name} - $${formatMoney(d.balance)}`}</p>
+                    <p className="text-sm text-gray-700">Último abono: {new Date(d.lastPayment).toLocaleDateString()}</p>
+                  </div>
                   <span className="actions">
                     <button onClick={() => setPayClientId(d.id)} title="Abono">
                       <img src={dollar} alt="abono" className="icon" />
