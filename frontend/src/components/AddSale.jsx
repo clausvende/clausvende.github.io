@@ -65,8 +65,8 @@ export default function AddSale({ go, onDone, sale }) {
         // Datos del cliente
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(10);
-        pdf.text(`Cliente: ${client.name}`, 5, 17);
-        pdf.text(`Fecha: ${new Date(ts).toLocaleString()}`, 5, 23);
+        pdf.text(String(`Cliente: ${client.name}`), 5, 17);
+        pdf.text(String(`Fecha: ${new Date(ts).toLocaleString()}`), 5, 23);
         pdf.line(5, 26, 53, 26);
 
         // Detalle de la venta
@@ -74,15 +74,15 @@ export default function AddSale({ go, onDone, sale }) {
         pdf.text('Descripción', 5, 32);
         pdf.text('Monto', 53, 32, { align: 'right' });
         pdf.setFont('helvetica', 'normal');
-        pdf.text(desc, 5, 38);
-        pdf.text(`$${formatMoney(value)}`, 53, 38, { align: 'right' });
+        pdf.text(String(desc), 5, 38);
+        pdf.text(String(`$${formatMoney(value)}`), 53, 38, { align: 'right' });
         pdf.line(5, 44, 53, 44);
 
         // Total
         pdf.setFont('helvetica', 'bold');
         pdf.text('TOTAL:', 40, 50, { align: 'right' });
         pdf.setFontSize(14);
-        pdf.text(`$${formatMoney(value)}`, 53, 50, { align: 'right' });
+        pdf.text(String(`$${formatMoney(value)}`), 53, 50, { align: 'right' });
 
         // Pie de página
         pdf.setFont('helvetica', 'normal');
