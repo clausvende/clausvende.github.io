@@ -79,19 +79,19 @@ export default function SalesList() {
         {filtered.map(s => (
           <li
             key={`${s.clientId}-${s.id}`}
-            className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-500"
+            className="card border-l-4 border-blue-500"
           >
             <div className="flex-1">
-              <p className="font-medium">{s.clientName}</p>
+              <p className="font-semibold">{s.clientName}</p>
               <p className="text-sm text-gray-800">
                 {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
               </p>
             </div>
-            <span className="flex gap-1">
-              <button onClick={() => setEditSale(s)}>
+            <span className="actions">
+              <button onClick={() => setEditSale(s)} title="Editar">
                 <img src={editIcon} alt="editar" className="icon" />
               </button>
-              <button onClick={() => removeSale(s)}>
+              <button onClick={() => removeSale(s)} title="Eliminar">
                 <img src={trash} alt="eliminar" className="icon" />
               </button>
             </span>

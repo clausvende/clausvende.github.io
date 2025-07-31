@@ -146,7 +146,7 @@ export default function ClientDetails({ id, go }) {
       <h3 className="font-semibold">Ventas</h3>
       <ul className="grid gap-2">
         {sales.map(s => (
-          <li key={s.id} className="bg-white p-2 rounded shadow">
+          <li key={s.id} className="card p-2">
             {editingSaleId === s.id ? (
               <>
                 <input
@@ -168,10 +168,10 @@ export default function ClientDetails({ id, go }) {
             ) : (
               <>
                 {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
-                <button onClick={() => startEditSale(s)}>
+                <button onClick={() => startEditSale(s)} title="Editar">
                   <img src={editIcon} alt="editar" className="icon" />
                 </button>
-                <button onClick={() => removeSale(s)}>
+                <button onClick={() => removeSale(s)} title="Eliminar">
                   <img src={trash} alt="eliminar" className="icon" />
                 </button>
               </>
@@ -182,7 +182,7 @@ export default function ClientDetails({ id, go }) {
       <h3 className="font-semibold">Abonos</h3>
       <ul className="grid gap-2">
         {payments.map(p => (
-          <li key={p.id} className="bg-white p-2 rounded shadow">
+          <li key={p.id} className="card p-2">
             {editingId === p.id ? (
               <>
                 <input
@@ -204,10 +204,10 @@ export default function ClientDetails({ id, go }) {
             ) : (
               <>
                 {new Date(p.date).toLocaleDateString()} - ${p.amount}
-                <button onClick={() => startEdit(p)}>
+                <button onClick={() => startEdit(p)} title="Editar">
                   <img src={editIcon} alt="editar" className="icon" />
                 </button>
-                <button onClick={() => removePayment(p)}>
+                <button onClick={() => removePayment(p)} title="Eliminar">
                   <img src={trash} alt="eliminar" className="icon" />
                 </button>
               </>

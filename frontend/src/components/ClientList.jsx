@@ -69,33 +69,30 @@ export default function ClientList({ go }) {
         {filtered.map(c => {
           const cleanPhone = (c.phone || '').replace(/\D/g, '');
           return (
-            <li
-              key={c.id}
-              className="bg-white p-4 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-blue-500"
-            >
+            <li key={c.id} className="card border-l-4 border-blue-500">
               <div className="flex-1">
-                <p className="font-medium">{c.name}</p>
+                <p className="font-semibold">{c.name}</p>
                 <p className="text-sm text-gray-800">Deuda: ${c.balance || 0}</p>
               </div>
-              <span className="flex gap-1">
-                <button onClick={() => go('client', c.id)}>
+              <span className="actions">
+                <button onClick={() => go('client', c.id)} title="Ver">
                   <img src={eye} alt="ver" className="icon" />
                 </button>
-                <button onClick={() => setStatementId(c.id)}>
+                <button onClick={() => setStatementId(c.id)} title="Estado">
                   <img src={docIcon} alt="estado" className="icon" />
                 </button>
-                <button onClick={() => setPayClientId(c.id)}>
+                <button onClick={() => setPayClientId(c.id)} title="Abono">
                   <img src={dollar} alt="abono" className="icon" />
                 </button>
                 {cleanPhone && (
-                  <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer" title="Mensaje">
                     <img src={chat} alt="mensaje" className="icon" />
                   </a>
                 )}
-                <button onClick={() => setEditClient(c)}>
+                <button onClick={() => setEditClient(c)} title="Editar">
                   <img src={editIcon} alt="editar" className="icon" />
                 </button>
-                <button onClick={() => removeClient(c)}>
+                <button onClick={() => removeClient(c)} title="Eliminar">
                   <img src={trash} alt="eliminar" className="icon" />
                 </button>
               </span>

@@ -131,7 +131,7 @@ form {
 
 .actions {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
   align-items: center;
 }
 
@@ -145,4 +145,23 @@ form {
   color: inherit;
   display: flex;
   align-items: center;
+}
+
+/* Generic card style for list items */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
