@@ -5,7 +5,7 @@ import AddClient from './AddClient';
 import Modal from './Modal';
 import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
-import { formatMoney } from '../utils';
+import { formatMoney, applyPaymentsToSales } from '../utils';
 
 export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
@@ -121,6 +121,11 @@ export default function ClientDetails({ id, go }) {
     go('clients');
   };
 
+  const salesData = applyPaymentsToSales(
+    sales.map(s => ({ ...s })),
+    payments
+  );
+
   if (!client) return <p>Cargando...</p>;
 
   return (
@@ -144,78 +149,95 @@ export default function ClientDetails({ id, go }) {
         <input className="border rounded px-3 py-2 flex-1" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
         <button type="submit" className="bg-blue-500 text-white px-3 py-2 rounded">Registrar abono</button>
       </form>
-      <h3 className="font-semibold">Ventas</h3>
-      <ul className="grid gap-2">
-        {sales.map(s => (
-          <li key={s.id} className="card p-2">
-            {editingSaleId === s.id ? (
-              <>
-                <input
-                  className="border rounded px-2 py-1 mr-2"
-                  type="number"
-                  step="0.01"
-                  value={editSaleAmount}
-                  onChange={e => setEditSaleAmount(e.target.value)}
-                />
-                <input
-                  className="border rounded px-2 py-1 mr-2"
-                  type="date"
-                  value={editSaleDate}
-                  onChange={e => setEditSaleDate(e.target.value)}
-                />
-                <button onClick={() => saveEditSale(s)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
-                <button onClick={cancelEditSale} className="px-2 py-1 rounded border">Cancelar</button>
-              </>
-            ) : (
-              <>
-                {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)}
-                <button onClick={() => startEditSale(s)} title="Editar">
-                  <img src={editIcon} alt="editar" className="icon" />
-                </button>
-                <button onClick={() => removeSale(s)} title="Eliminar">
-                  <img src={trash} alt="eliminar" className="icon" />
-                </button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-      <h3 className="font-semibold">Abonos</h3>
-      <ul className="grid gap-2">
-        {payments.map(p => (
-          <li key={p.id} className="card p-2">
-            {editingId === p.id ? (
-              <>
-                <input
-                  className="border rounded px-2 py-1 mr-2"
-                  type="number"
-                  step="0.01"
-                  value={editAmount}
-                  onChange={e => setEditAmount(e.target.value)}
-                />
-                <input
-                  className="border rounded px-2 py-1 mr-2"
-                  type="date"
-                  value={editDate}
-                  onChange={e => setEditDate(e.target.value)}
-                />
-                <button onClick={() => saveEdit(p)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
-                <button onClick={cancelEdit} className="px-2 py-1 rounded border">Cancelar</button>
-              </>
-            ) : (
-              <>
-                {new Date(p.date).toLocaleDateString()} - ${formatMoney(p.amount)}
-                <button onClick={() => startEdit(p)} title="Editar">
-                  <img src={editIcon} alt="editar" className="icon" />
-                </button>
-                <button onClick={() => removePayment(p)} title="Eliminar">
-                  <img src={trash} alt="eliminar" className="icon" />
-                </button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="section">
+        <h3 className="text-lg font-semibold flex items-center gap-2">🛍️ Ventas</h3>
+        <ul className="grid gap-2">
+          {salesData.map(s => (
+            <li key={s.id} className="card">
+              {editingSaleId === s.id ? (
+                <>
+                  <input
+                    className="border rounded px-2 py-1 mr-2"
+                    type="number"
+                    step="0.01"
+                    value={editSaleAmount}
+                    onChange={e => setEditSaleAmount(e.target.value)}
+                  />
+                  <input
+                    className="border rounded px-2 py-1 mr-2"
+                    type="date"
+                    value={editSaleDate}
+                    onChange={e => setEditSaleDate(e.target.value)}
+                  />
+                  <button onClick={() => saveEditSale(s)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                  <button onClick={cancelEditSale} className="px-2 py-1 rounded border">Cancelar</button>
+                </>
+              ) : (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm flex items-center gap-1"><span>📅</span>{new Date(s.date).toLocaleDateString()}</p>
+                    <p className="text-sm flex items-center gap-1"><span>🛍️</span>{s.description}</p>
+                    <p className="text-sm flex items-center gap-1 font-medium"><span>💲</span>${formatMoney(s.amount)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${s.pagada ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{s.pagada ? '✅ Pagada' : '⚠️ Pendiente'}</span>
+                    <button onClick={() => startEditSale(s)} title="Editar">
+                      <img src={editIcon} alt="editar" className="icon" />
+                    </button>
+                    <button onClick={() => removeSale(s)} title="Eliminar">
+                      <img src={trash} alt="eliminar" className="icon" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="section">
+        <h3 className="text-lg font-semibold flex items-center gap-2">💸 Abonos</h3>
+        <ul className="grid gap-2">
+          {payments.map(p => (
+            <li key={p.id} className="card">
+              {editingId === p.id ? (
+                <>
+                  <input
+                    className="border rounded px-2 py-1 mr-2"
+                    type="number"
+                    step="0.01"
+                    value={editAmount}
+                    onChange={e => setEditAmount(e.target.value)}
+                  />
+                  <input
+                    className="border rounded px-2 py-1 mr-2"
+                    type="date"
+                    value={editDate}
+                    onChange={e => setEditDate(e.target.value)}
+                  />
+                  <button onClick={() => saveEdit(p)} className="bg-blue-500 text-white px-2 py-1 rounded mr-1">Guardar</button>
+                  <button onClick={cancelEdit} className="px-2 py-1 rounded border">Cancelar</button>
+                </>
+              ) : (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm flex items-center gap-1"><span>📅</span>{new Date(p.date).toLocaleDateString()}</p>
+                    <p className="text-sm flex items-center gap-1 font-medium"><span>💲</span>${formatMoney(p.amount)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => startEdit(p)} title="Editar">
+                      <img src={editIcon} alt="editar" className="icon" />
+                    </button>
+                    <button onClick={() => removePayment(p)} title="Eliminar">
+                      <img src={trash} alt="eliminar" className="icon" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
       {editMode && (
         <Modal onClose={() => setEditMode(false)}>
           <AddClient client={client} onDone={() => setEditMode(false)} />
