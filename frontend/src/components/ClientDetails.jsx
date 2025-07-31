@@ -138,7 +138,12 @@ export default function ClientDetails({ id, go }) {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => go('list')} className="text-blue-500">Regresar</button>
+      <button
+        onClick={() => go('list')}
+        className="bg-blue-500 text-white px-3 py-2 rounded"
+      >
+        Regresar
+      </button>
       <h2 className="text-lg font-semibold flex items-center gap-2">
         {client.name}
         <button onClick={() => setEditMode(true)}>
