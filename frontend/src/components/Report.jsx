@@ -266,14 +266,14 @@ export default function Report() {
             {debtors.map(d => {
               const cleanPhone = (d.phone || '').replace(/\D/g, '')
               return (
-                <li key={d.id} className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-red-500">
-                  <span className="font-medium">{`${d.name} - $${d.balance}`}</span>
-                  <span className="flex gap-1">
-                    <button onClick={() => setPayClientId(d.id)}>
+                <li key={d.id} className="card border-l-4 border-red-500">
+                  <span className="font-semibold">{`${d.name} - $${d.balance}`}</span>
+                  <span className="actions">
+                    <button onClick={() => setPayClientId(d.id)} title="Abono">
                       <img src={dollar} alt="abono" className="icon" />
                     </button>
                     {cleanPhone && (
-                      <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer">
+                      <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer" title="Mensaje">
                         <img src={chat} alt="mensaje" className="icon" />
                       </a>
                     )}
