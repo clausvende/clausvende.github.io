@@ -24,9 +24,12 @@ Para generar la versión estática utilizada en producción ejecute `npm run bui
 
 ## Roles de usuario
 
-La aplicación maneja permisos básicos mediante un campo `role` guardado en la colección `users` de Firestore. Al iniciar sesión por primera vez se asigna automáticamente el rol **Vendedor**. Para cambiarlo debe editarse dicho documento desde la consola de Firebase y establecer el valor deseado, por ejemplo **Administrador**.
+La aplicación maneja permisos mediante un campo `role` guardado en la colección `users` de Firestore. Al iniciar sesión por primera vez se asigna automáticamente el rol **Vendedor**. Para cambiarlo debe editarse dicho documento desde la consola de Firebase y establecer el valor deseado, por ejemplo **Administrador**.
 
-Actualmente el rol sólo se muestra en la interfaz, pero permite distinguir qué usuario realizó cada operación si se consulta la base de datos.
+Los permisos se definen así:
+
+- **Vendedor**: sólo puede acceder a las secciones de *Ventas* y *Clientes* y utilizar las funciones relacionadas.
+- **Administrador**: tiene acceso completo al sitio, incluido el panel de *Finanzas*.
 
 ## Licencia
 
