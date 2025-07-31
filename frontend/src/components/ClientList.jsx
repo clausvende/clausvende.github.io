@@ -1,5 +1,6 @@
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useDebounce } from '../utils';
 import { db } from '../firebase';
 import AddClient from './AddClient';
 import Modal from './Modal';
@@ -30,7 +31,18 @@ export default function ClientList({ go }) {
     fetchClients();
   }, []);
 
-  const filtered = clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
+  const debounced = useDebounce(search);
+
+  const filtered = useMemo(() => {
+    const term = debounced.trim().toLowerCase();
+    if (term.length < 3) return [];
+    return clients.filter(c => {
+      return (
+        c.name.toLowerCase().includes(term) ||
+        (c.phone || '').toLowerCase().includes(term)
+      );
+    });
+  }, [debounced, clients]);
 
   const removeClient = async c => {
     if (!window.confirm('¿Eliminar este cliente?')) return;
@@ -99,6 +111,9 @@ export default function ClientList({ go }) {
             </li>
           );
         })}
+        {debounced.trim().length >= 3 && filtered.length === 0 && (
+          <li className="text-center text-gray-600">No se encontraron resultados</li>
+        )}
       </ul>
       {show && (
         <Modal onClose={() => setShow(false)}>

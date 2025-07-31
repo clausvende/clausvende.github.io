@@ -1,5 +1,6 @@
 import { collection, getDocs, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useDebounce } from '../utils';
 import { db } from '../firebase';
 import AddSale from './AddSale';
 import Modal from './Modal';
@@ -45,9 +46,16 @@ export default function SalesList() {
     fetchSales();
   };
 
-  const filtered = sales.filter(s =>
-    s.clientName.toLowerCase().includes(search.toLowerCase())
-  );
+  const debounced = useDebounce(search);
+
+  const filtered = useMemo(() => {
+    const term = debounced.trim().toLowerCase();
+    if (term.length < 3) return [];
+    return sales.filter(s =>
+      s.clientName.toLowerCase().includes(term) ||
+      s.description.toLowerCase().includes(term)
+    );
+  }, [debounced, sales]);
 
   return (
     <div className="space-y-4">
@@ -98,6 +106,9 @@ export default function SalesList() {
             </span>
           </li>
         ))}
+        {debounced.trim().length >= 3 && filtered.length === 0 && (
+          <li className="text-center text-gray-600">No se encontraron resultados</li>
+        )}
       </ul>
       {show && (
         <Modal onClose={() => setShow(false)}>
