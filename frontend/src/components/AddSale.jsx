@@ -2,6 +2,7 @@ import { collection, getDocs, doc, addDoc, updateDoc, increment } from 'firebase
 import { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import { db } from '../firebase';
+import { formatMoney } from '../utils';
 
 export default function AddSale({ go, onDone, sale }) {
   const [clients, setClients] = useState([]);
@@ -58,7 +59,7 @@ export default function AddSale({ go, onDone, sale }) {
         pdf.text(`Cliente: ${client.name}`, 5, 20);
         pdf.text(`Fecha: ${new Date(ts).toLocaleString()}`, 5, 30);
         pdf.text(desc, 5, 40);
-        pdf.text(`Monto: $${value.toFixed(2)}`, 5, 50);
+        pdf.text(`Monto: $${formatMoney(value)}`, 5, 50);
         pdf.save('ticket.pdf');
       }
     }

@@ -6,6 +6,7 @@ import Modal from './Modal';
 import plus from '../assets/icons/plus.svg';
 import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
+import { formatMoney } from '../utils';
 
 export default function SalesList() {
   const [sales, setSales] = useState([]);
@@ -84,7 +85,7 @@ export default function SalesList() {
             <div className="flex-1">
               <p className="font-semibold">{s.clientName}</p>
               <p className="text-sm text-gray-800">
-                {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
+                {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)}
               </p>
             </div>
             <span className="actions">
