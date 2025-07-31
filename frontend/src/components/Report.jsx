@@ -1,43 +1,121 @@
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
-import chat from '../assets/icons/chat.svg';
-import dollar from '../assets/icons/dollar.svg';
-import Modal from './Modal';
-import AddPayment from './AddPayment';
-import { db } from '../firebase';
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore'
+import { useEffect, useRef, useState } from 'react'
+import chat from '../assets/icons/chat.svg'
+import dollar from '../assets/icons/dollar.svg'
+import cart from '../assets/icons/cart.svg'
+import users from '../assets/icons/users.svg'
+import Modal from './Modal'
+import AddPayment from './AddPayment'
+import { db } from '../firebase'
 
 export default function Report() {
-  const [summary, setSummary] = useState({ total: 0, outstanding: 0 });
-  const [debtors, setDebtors] = useState([]);
-  const [payClientId, setPayClientId] = useState(null);
-  const fileRef = useRef(null);
+  const [metrics, setMetrics] = useState({
+    outstanding: 0,
+    monthlyPayments: 0,
+    totalSales: 0,
+    recoveryRate: 0,
+    avgPayDays: 0,
+    topDebtor: null,
+    dueBalance: 0,
+    overdueBalance: 0,
+    monthlySales: []
+  })
+  const [debtors, setDebtors] = useState([])
+  const [payClientId, setPayClientId] = useState(null)
+  const fileRef = useRef(null)
 
   const load = async () => {
-    const snap = await getDocs(collection(db, 'clients'));
-    let total = 0;
-    let outstanding = 0;
-    const now = Date.now();
-    const month = 30 * 24 * 60 * 60 * 1000;
-    const overdue = [];
+    const snap = await getDocs(collection(db, 'clients'))
+    const now = Date.now()
+    const monthMs = 30 * 24 * 60 * 60 * 1000
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime()
+    const salesMap = {}
+    let outstanding = 0
+    let totalSales = 0
+    let monthlyPayments = 0
+    let totalPayDays = 0
+    let payCount = 0
+    let topDebtor = { balance: 0 }
+    let dueBalance = 0
+    let overdueBalance = 0
+    const overdueClients = []
     for (const docSnap of snap.docs) {
-      const data = docSnap.data();
-      total += data.total || 0;
-      const balance = data.balance || 0;
-      outstanding += balance;
+      const data = docSnap.data()
+      const clientId = docSnap.id
+      const balance = data.balance || 0
+      const name = data.name
+      outstanding += balance
+      if (balance > topDebtor.balance) topDebtor = { id: clientId, name, balance }
+
+      const salesSnap = await getDocs(collection(db, 'clients', clientId, 'sales'))
+      const paymentSnap = await getDocs(collection(db, 'clients', clientId, 'payments'))
+      const sales = salesSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.date - b.date)
+      const payments = paymentSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.date - b.date)
+
+      sales.forEach(s => {
+        totalSales += s.amount
+        const d = new Date(s.date)
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        salesMap[key] = (salesMap[key] || 0) + s.amount
+      })
+
+      payments.forEach(p => {
+        if (p.date >= startOfMonth) monthlyPayments += p.amount
+      })
+
       if (balance > 0) {
-        const paySnap = await getDocs(collection(db, 'clients', docSnap.id, 'payments'));
-        let last = 0;
-        paySnap.forEach(p => {
-          if (p.data().date > last) last = p.data().date;
-        });
-        if (!last || now - last >= month) {
-          overdue.push({ id: docSnap.id, name: data.name, phone: data.phone, balance });
+        let lastPayment = 0
+        payments.forEach(p => { if (p.date > lastPayment) lastPayment = p.date })
+        if (!lastPayment && sales.length) lastPayment = sales[sales.length - 1].date
+        if (now - lastPayment >= monthMs) {
+          overdueBalance += balance
+          overdueClients.push({ id: clientId, name, phone: data.phone, balance })
+        } else {
+          dueBalance += balance
+        }
+      }
+
+      const queue = sales.map(s => ({ date: s.date, remaining: s.amount }))
+      for (const p of payments) {
+        let amount = p.amount
+        while (amount > 0 && queue.length) {
+          const s = queue[0]
+          const used = Math.min(s.remaining, amount)
+          totalPayDays += (p.date - s.date) / (1000 * 60 * 60 * 24)
+          payCount++
+          s.remaining -= used
+          amount -= used
+          if (s.remaining <= 0) queue.shift()
+          else break
         }
       }
     }
-    setSummary({ total, outstanding });
-    setDebtors(overdue);
-  };
+
+    const monthsToShow = 6
+    const months = []
+    const nowDate = new Date()
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+      const d = new Date(nowDate.getFullYear(), nowDate.getMonth() - i, 1)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      months.push({ month: key, total: salesMap[key] || 0 })
+    }
+
+    const recoveryRate = totalSales ? (monthlyPayments / totalSales) * 100 : 0
+    const avgPayDays = payCount ? totalPayDays / payCount : 0
+
+    setMetrics({
+      outstanding,
+      monthlyPayments,
+      totalSales,
+      recoveryRate,
+      avgPayDays,
+      topDebtor,
+      dueBalance,
+      overdueBalance,
+      monthlySales: months
+    })
+    setDebtors(overdueClients)
+  }
 
   useEffect(() => {
     load();
@@ -95,24 +173,101 @@ export default function Report() {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Finanzas</h2>
-      <p>Total ventas: ${summary.total}</p>
-      <p>Saldo pendiente: ${summary.outstanding}</p>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Panel de Finanzas</h2>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+          <img src={dollar} alt="" className="w-6 h-6 text-blue-600" />
+          <div>
+            <p className="text-sm text-gray-600">Saldo por cobrar</p>
+              <p className="text-lg font-bold">{`$${metrics.outstanding.toFixed(2)}`}</p>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+          <img src={dollar} alt="" className="w-6 h-6 text-green-600" />
+          <div>
+            <p className="text-sm text-gray-600">Abonos del mes</p>
+              <p className="text-lg font-bold">{`$${metrics.monthlyPayments.toFixed(2)}`}</p>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+          <img src={cart} alt="" className="w-6 h-6 text-blue-600" />
+          <div>
+            <p className="text-sm text-gray-600">Total ventas a crédito</p>
+              <p className="text-lg font-bold">{`$${metrics.totalSales.toFixed(2)}`}</p>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M2.25 13.5A8.25 8.25 0 0110.5 5.25V3a.75.75 0 011.5 0v2.25A8.25 8.25 0 0120.25 13.5h2.25a.75.75 0 010 1.5H20.25A8.25 8.25 0 0111.25 23.25v2.25a.75.75 0 01-1.5 0v-2.25A8.25 8.25 0 012.25 15H0a.75.75 0 010-1.5h2.25z"/>
+          </svg>
+          <div>
+            <p className="text-sm text-gray-600">Recuperación</p>
+            <p className="text-lg font-bold">{metrics.recoveryRate.toFixed(1)}%</p>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M12 1.5a10.5 10.5 0 100 21 10.5 10.5 0 000-21zM12 3a9 9 0 110 18A9 9 0 0112 3zm-.75 4.5a.75.75 0 011.5 0v4.336l3.404 1.967a.75.75 0 01-.758 1.288l-3.75-2.167A.75.75 0 0111.25 12V7.5z" clipRule="evenodd"/>
+          </svg>
+          <div>
+            <p className="text-sm text-gray-600">Promedio de pago (días)</p>
+            <p className="text-lg font-bold">{metrics.avgPayDays.toFixed(1)}</p>
+          </div>
+        </div>
+        {metrics.topDebtor && (
+          <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+            <img src={users} alt="" className="w-6 h-6 text-red-600" />
+            <div>
+              <p className="text-sm text-gray-600">Mayor saldo</p>
+              <p className="text-lg font-bold">{`${metrics.topDebtor.name} - $${metrics.topDebtor.balance.toFixed(2)}`}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="font-medium mb-2">Distribución de saldos</h3>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-4 bg-gray-200 rounded overflow-hidden flex">
+              <div className="bg-green-500" style={{ width: `${(metrics.dueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
+              <div className="bg-red-500" style={{ width: `${(metrics.overdueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
+            </div>
+              <span className="text-sm">{`$${metrics.dueBalance.toFixed(2)} / $${metrics.overdueBalance.toFixed(2)}`}</span>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="font-medium mb-2">Ventas a crédito por mes</h3>
+          <div className="flex items-end gap-1 h-32">
+            {(() => {
+              const max = Math.max(...metrics.monthlySales.map(m => m.total), 1)
+              return metrics.monthlySales.map(m => (
+                <div key={m.month} className="flex flex-col items-center flex-1">
+                  <div className="bg-blue-500 w-full" style={{ height: `${(m.total / max) * 100}%` }} />
+                  <span className="text-xs mt-1">{m.month.slice(5)}</span>
+                </div>
+              ))
+            })()}
+          </div>
+        </div>
+      </div>
+
       <div className="flex gap-2">
         <button onClick={exportDb} className="bg-blue-500 text-white px-3 py-1 rounded">Exportar DB</button>
         <button onClick={() => fileRef.current.click()} className="bg-blue-500 text-white px-3 py-1 rounded">Importar DB</button>
       </div>
       <input type="file" accept="application/json" ref={fileRef} style={{ display: 'none' }} onChange={importDb} />
+
       {debtors.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Clientes Morosos</h3>
           <ul className="grid gap-3">
             {debtors.map(d => {
-              const cleanPhone = (d.phone || '').replace(/\D/g, '');
+              const cleanPhone = (d.phone || '').replace(/\D/g, '')
               return (
                 <li key={d.id} className="bg-white p-4 rounded shadow flex justify-between items-center border-l-4 border-red-500">
-                  <span className="font-medium">{d.name} - ${d.balance}</span>
+                  <span className="font-medium">{`${d.name} - $${d.balance}`}</span>
                   <span className="flex gap-1">
                     <button onClick={() => setPayClientId(d.id)}>
                       <img src={dollar} alt="abono" className="icon" />
@@ -124,16 +279,16 @@ export default function Report() {
                     )}
                   </span>
                 </li>
-              );
+              )
             })}
           </ul>
         </div>
       )}
       {payClientId && (
         <Modal onClose={() => setPayClientId(null)}>
-          <AddPayment clientId={payClientId} onDone={() => { setPayClientId(null); load(); }} />
+          <AddPayment clientId={payClientId} onDone={() => { setPayClientId(null); load() }} />
         </Modal>
       )}
     </div>
-  );
+  )
 }
