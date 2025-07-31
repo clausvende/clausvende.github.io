@@ -25,8 +25,9 @@ export function AuthProvider({ children }) {
         const snap = await getDoc(ref)
         if (snap.exists()) {
           setRole(snap.data().role)
+          if (!snap.data().email) await setDoc(ref, { email: u.email, displayName: u.displayName }, { merge: true })
         } else {
-          await setDoc(ref, { role: 'Vendedor' })
+          await setDoc(ref, { role: 'Vendedor', email: u.email, displayName: u.displayName })
           setRole('Vendedor')
         }
       } else {
