@@ -3,6 +3,7 @@ import ClientList from './components/ClientList'
 import ClientDetails from './components/ClientDetails'
 import Report from './components/Report'
 import SalesList from './components/SalesList'
+import UsersList from './components/UsersList'
 import { AuthProvider, useAuth } from './AuthProvider'
 import Login from './Login'
 import './App.css'
@@ -26,7 +27,7 @@ function MainContent({ page, setPage }) {
   const { nombres, apellidos } = splitName(user.displayName)
 
   const go = (name, clientId = null) => {
-    if (name === 'finance' && role !== 'Administrador') return
+    if ((name === 'finance' || name === 'users') && role !== 'Administrador') return
     setPage({ name, clientId })
     setOpen(false)
   }
@@ -42,6 +43,11 @@ function MainContent({ page, setPage }) {
     case 'finance':
       content = role === 'Administrador'
         ? <Report />
+        : <p className="text-center">Acceso restringido</p>
+      break
+    case 'users':
+      content = role === 'Administrador'
+        ? <UsersList />
         : <p className="text-center">Acceso restringido</p>
       break
     case 'client':
@@ -82,6 +88,7 @@ function MainContent({ page, setPage }) {
             Clientes
           </button>
           {role === 'Administrador' && (
+            <>
             <button onClick={() => go('finance')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-500 text-left group">
               <svg className="w-5 h-5 text-current group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 01-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004zM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 01-.921.42z"/>
@@ -89,6 +96,13 @@ function MainContent({ page, setPage }) {
               </svg>
               Finanzas
             </button>
+            <button onClick={() => go('users')} className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-500 text-left group">
+              <svg className="w-5 h-5 text-current group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M15.75 9A3.75 3.75 0 1112 5.25 3.75 3.75 0 0115.75 9zm-7.5 0A3.75 3.75 0 115 5.25 3.75 3.75 0 018.25 9zM3 20.25a8.25 8.25 0 1118 0v1.5H3v-1.5z"/>
+              </svg>
+              Usuarios
+            </button>
+            </>
           )}
         </nav>
       </aside>
