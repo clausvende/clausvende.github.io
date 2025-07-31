@@ -5,6 +5,7 @@ import AddUser from './AddUser'
 import EditUser from './EditUser'
 import { db } from '../firebase'
 import editIcon from '../assets/icons/edit.svg'
+import plus from '../assets/icons/plus.svg'
 
 export default function UsersList() {
   const [allowed, setAllowed] = useState([])
@@ -47,8 +48,13 @@ export default function UsersList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <button onClick={() => setShowAdd(true)} className="bg-blue-500 text-white px-3 py-2 rounded">Nuevo usuario</button>
+      <div className="flex justify-start">
+        <button
+          onClick={() => setShowAdd(true)}
+          className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded"
+        >
+          <img src={plus} alt="" className="w-5 h-5" />Nuevo usuario
+        </button>
       </div>
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Usuarios Registrados</h3>
