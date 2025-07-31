@@ -148,17 +148,23 @@ export default function AccountStatement({ clientId }) {
         <p><strong>Saldo actual:</strong> ${formatMoney(client.balance)}</p>
         <h3 className="font-semibold">Ventas</h3>
         <ul className="list-disc pl-5">
-          {sales.map(s => (
-            <li key={s.id}>
-              {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)} | Abonado: ${formatMoney(s.abonado)} | Pendiente: ${formatMoney(s.pendiente)} | {s.pagada ? 'Pagada' : 'Pendiente'}
-            </li>
-          ))}
+          {sales
+            .slice()
+            .sort((a, b) => a.date - b.date)
+            .map(s => (
+              <li key={s.id}>
+                {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)} | Abonado: ${formatMoney(s.abonado)} | Pendiente: ${formatMoney(s.pendiente)} | {s.pagada ? 'Pagada' : 'Pendiente'}
+              </li>
+            ))}
         </ul>
         <h3 className="font-semibold">Abonos</h3>
         <ul className="list-disc pl-5">
-          {payments.map(p => (
-            <li key={p.id}>{new Date(p.date).toLocaleDateString()} - ${formatMoney(p.amount)}</li>
-          ))}
+          {payments
+            .slice()
+            .sort((a, b) => a.date - b.date)
+            .map(p => (
+              <li key={p.id}>{new Date(p.date).toLocaleDateString()} - ${formatMoney(p.amount)}</li>
+            ))}
         </ul>
         <p><strong>Total compras:</strong> ${formatMoney(totalSales)}</p>
         <p><strong>Total abonos:</strong> ${formatMoney(totalPayments)}</p>
