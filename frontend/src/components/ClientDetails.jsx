@@ -5,6 +5,7 @@ import AddClient from './AddClient';
 import Modal from './Modal';
 import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
+import { formatMoney } from '../utils';
 
 export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
@@ -138,7 +139,7 @@ export default function ClientDetails({ id, go }) {
       {client.notes && (
         <p className="text-gray-800">Observaciones: {client.notes}</p>
       )}
-      <p className="text-gray-800">Deuda actual: ${client.balance || 0}</p>
+      <p className="text-gray-800">Deuda actual: ${formatMoney(client.balance)}</p>
       <form onSubmit={addPayment} className="flex gap-2">
         <input className="border rounded px-3 py-2 flex-1" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monto del abono" type="number" step="0.01" />
         <button type="submit" className="bg-blue-500 text-white px-3 py-2 rounded">Registrar abono</button>
@@ -167,7 +168,7 @@ export default function ClientDetails({ id, go }) {
               </>
             ) : (
               <>
-                {new Date(s.date).toLocaleDateString()} - {s.description} - ${s.amount}
+                {new Date(s.date).toLocaleDateString()} - {s.description} - ${formatMoney(s.amount)}
                 <button onClick={() => startEditSale(s)} title="Editar">
                   <img src={editIcon} alt="editar" className="icon" />
                 </button>
@@ -203,7 +204,7 @@ export default function ClientDetails({ id, go }) {
               </>
             ) : (
               <>
-                {new Date(p.date).toLocaleDateString()} - ${p.amount}
+                {new Date(p.date).toLocaleDateString()} - ${formatMoney(p.amount)}
                 <button onClick={() => startEdit(p)} title="Editar">
                   <img src={editIcon} alt="editar" className="icon" />
                 </button>

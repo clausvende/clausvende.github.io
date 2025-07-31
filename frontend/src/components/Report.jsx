@@ -7,6 +7,7 @@ import users from '../assets/icons/users.svg'
 import Modal from './Modal'
 import AddPayment from './AddPayment'
 import { db } from '../firebase'
+import { formatMoney } from '../utils'
 
 export default function Report() {
   const [metrics, setMetrics] = useState({
@@ -180,21 +181,21 @@ export default function Report() {
           <img src={dollar} alt="" className="w-6 h-6 text-blue-600" />
           <div>
             <p className="text-sm text-gray-600">Saldo por cobrar</p>
-              <p className="text-lg font-bold">{`$${metrics.outstanding.toFixed(2)}`}</p>
+              <p className="text-lg font-bold">{`$${formatMoney(metrics.outstanding)}`}</p>
           </div>
         </div>
         <div className="bg-white p-4 rounded shadow flex items-center gap-3">
           <img src={dollar} alt="" className="w-6 h-6 text-green-600" />
           <div>
             <p className="text-sm text-gray-600">Abonos del mes</p>
-              <p className="text-lg font-bold">{`$${metrics.monthlyPayments.toFixed(2)}`}</p>
+              <p className="text-lg font-bold">{`$${formatMoney(metrics.monthlyPayments)}`}</p>
           </div>
         </div>
         <div className="bg-white p-4 rounded shadow flex items-center gap-3">
           <img src={cart} alt="" className="w-6 h-6 text-blue-600" />
           <div>
             <p className="text-sm text-gray-600">Total ventas a crédito</p>
-              <p className="text-lg font-bold">{`$${metrics.totalSales.toFixed(2)}`}</p>
+              <p className="text-lg font-bold">{`$${formatMoney(metrics.totalSales)}`}</p>
           </div>
         </div>
         <div className="bg-white p-4 rounded shadow flex items-center gap-3">
@@ -220,7 +221,7 @@ export default function Report() {
             <img src={users} alt="" className="w-6 h-6 text-red-600" />
             <div>
               <p className="text-sm text-gray-600">Mayor saldo</p>
-              <p className="text-lg font-bold">{`${metrics.topDebtor.name} - $${metrics.topDebtor.balance.toFixed(2)}`}</p>
+              <p className="text-lg font-bold">{`${metrics.topDebtor.name} - $${formatMoney(metrics.topDebtor.balance)}`}</p>
             </div>
           </div>
         )}
@@ -234,7 +235,7 @@ export default function Report() {
               <div className="bg-green-500" style={{ width: `${(metrics.dueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
               <div className="bg-red-500" style={{ width: `${(metrics.overdueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
             </div>
-              <span className="text-sm">{`$${metrics.dueBalance.toFixed(2)} / $${metrics.overdueBalance.toFixed(2)}`}</span>
+              <span className="text-sm">{`$${formatMoney(metrics.dueBalance)} / $${formatMoney(metrics.overdueBalance)}`}</span>
           </div>
         </div>
         <div className="bg-white p-4 rounded shadow">
