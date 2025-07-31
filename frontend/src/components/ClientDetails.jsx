@@ -1,5 +1,6 @@
 import { collection, addDoc, onSnapshot, doc, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../AuthProvider';
 import { db } from '../firebase';
 import AddClient from './AddClient';
 import Modal from './Modal';
@@ -19,6 +20,7 @@ export default function ClientDetails({ id, go }) {
   const [editingSaleId, setEditingSaleId] = useState(null);
   const [editSaleAmount, setEditSaleAmount] = useState('');
   const [editSaleDate, setEditSaleDate] = useState('');
+  const { role } = useAuth();
 
   useEffect(() => {
     const unsubClient = onSnapshot(doc(db, 'clients', id), snap => {
@@ -146,12 +148,16 @@ export default function ClientDetails({ id, go }) {
       </button>
       <h2 className="text-lg font-semibold flex items-center gap-2">
         {client.name}
-        <button onClick={() => setEditMode(true)}>
-          <img src={editIcon} alt="editar" className="icon" />
-        </button>
-        <button onClick={removeClient}>
-          <img src={trash} alt="eliminar" className="icon" />
-        </button>
+        {role === 'Administrador' && (
+          <>
+            <button onClick={() => setEditMode(true)}>
+              <img src={editIcon} alt="editar" className="icon" />
+            </button>
+            <button onClick={removeClient}>
+              <img src={trash} alt="eliminar" className="icon" />
+            </button>
+          </>
+        )}
       </h2>
       <p className="text-gray-800">Teléfono: {client.phone}</p>
       {client.notes && (
@@ -167,7 +173,7 @@ export default function ClientDetails({ id, go }) {
         <ul className="grid gap-2">
           {salesData.map(s => (
             <li key={s.id} className="card">
-              {editingSaleId === s.id ? (
+              {role === 'Administrador' && editingSaleId === s.id ? (
                 <>
                   <input
                     className="border rounded px-2 py-1 mr-2"
@@ -194,12 +200,16 @@ export default function ClientDetails({ id, go }) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${s.pagada ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{s.pagada ? '✅ Pagada' : '⚠️ Pendiente'}</span>
-                    <button onClick={() => startEditSale(s)} title="Editar">
-                      <img src={editIcon} alt="editar" className="icon" />
-                    </button>
-                    <button onClick={() => removeSale(s)} title="Eliminar">
-                      <img src={trash} alt="eliminar" className="icon" />
-                    </button>
+                    {role === 'Administrador' && (
+                      <>
+                        <button onClick={() => startEditSale(s)} title="Editar">
+                          <img src={editIcon} alt="editar" className="icon" />
+                        </button>
+                        <button onClick={() => removeSale(s)} title="Eliminar">
+                          <img src={trash} alt="eliminar" className="icon" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -251,7 +261,7 @@ export default function ClientDetails({ id, go }) {
           ))}
         </ul>
       </div>
-      {editMode && (
+      {role === 'Administrador' && editMode && (
         <Modal onClose={() => setEditMode(false)}>
           <AddClient client={client} onDone={() => setEditMode(false)} />
         </Modal>

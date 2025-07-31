@@ -28,7 +28,7 @@ La aplicación maneja permisos mediante un campo `role` guardado en la colecció
 
 Los permisos se definen así:
 
-- **Vendedor**: sólo puede acceder a las secciones de *Ventas* y *Clientes* y utilizar las funciones relacionadas.
+- **Vendedor**: sólo puede acceder a las secciones de *Ventas* y *Clientes* y utilizar las funciones relacionadas, pero **no** puede editar ni eliminar registros de clientes ni de ventas.
 - **Administrador**: tiene acceso completo al sitio, incluido el panel de *Finanzas*.
 
 ## Licencia

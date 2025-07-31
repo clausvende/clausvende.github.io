@@ -1,5 +1,6 @@
 import { collection, getDocs, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../AuthProvider';
 import { db } from '../firebase';
 import AddSale from './AddSale';
 import Modal from './Modal';
@@ -13,6 +14,7 @@ export default function SalesList() {
   const [search, setSearch] = useState('');
   const [show, setShow] = useState(false);
   const [editSale, setEditSale] = useState(null);
+  const { role } = useAuth();
 
   const fetchSales = async () => {
     const clientSnap = await getDocs(collection(db, 'clients'));
@@ -89,12 +91,16 @@ export default function SalesList() {
               </p>
             </div>
             <span className="actions">
-              <button onClick={() => setEditSale(s)} title="Editar">
-                <img src={editIcon} alt="editar" className="icon" />
-              </button>
-              <button onClick={() => removeSale(s)} title="Eliminar">
-                <img src={trash} alt="eliminar" className="icon" />
-              </button>
+              {role === 'Administrador' && (
+                <>
+                  <button onClick={() => setEditSale(s)} title="Editar">
+                    <img src={editIcon} alt="editar" className="icon" />
+                  </button>
+                  <button onClick={() => removeSale(s)} title="Eliminar">
+                    <img src={trash} alt="eliminar" className="icon" />
+                  </button>
+                </>
+              )}
             </span>
           </li>
         ))}
@@ -104,7 +110,7 @@ export default function SalesList() {
           <AddSale onDone={() => { setShow(false); fetchSales(); }} />
         </Modal>
       )}
-      {editSale && (
+      {role === 'Administrador' && editSale && (
         <Modal onClose={() => setEditSale(null)}>
           <AddSale sale={editSale} onDone={() => { setEditSale(null); fetchSales(); }} />
         </Modal>

@@ -1,5 +1,6 @@
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../AuthProvider';
 import { db } from '../firebase';
 import AddClient from './AddClient';
 import Modal from './Modal';
@@ -21,6 +22,7 @@ export default function ClientList({ go }) {
   const [editClient, setEditClient] = useState(null);
   const [statementId, setStatementId] = useState(null);
   const [payClientId, setPayClientId] = useState(null);
+  const { role } = useAuth();
 
   const fetchClients = async () => {
     const snapshot = await getDocs(collection(db, 'clients'));
@@ -90,12 +92,16 @@ export default function ClientList({ go }) {
                     <img src={chat} alt="mensaje" className="icon" />
                   </a>
                 )}
-                <button onClick={() => setEditClient(c)} title="Editar">
-                  <img src={editIcon} alt="editar" className="icon" />
-                </button>
-                <button onClick={() => removeClient(c)} title="Eliminar">
-                  <img src={trash} alt="eliminar" className="icon" />
-                </button>
+                {role === 'Administrador' && (
+                  <>
+                    <button onClick={() => setEditClient(c)} title="Editar">
+                      <img src={editIcon} alt="editar" className="icon" />
+                    </button>
+                    <button onClick={() => removeClient(c)} title="Eliminar">
+                      <img src={trash} alt="eliminar" className="icon" />
+                    </button>
+                  </>
+                )}
               </span>
             </li>
           );
