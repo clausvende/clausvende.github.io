@@ -51,7 +51,7 @@ export default function UsersList() {
       <div className="flex justify-start">
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded"
+          className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded w-full sm:w-auto"
         >
           <img src={plus} alt="" className="w-5 h-5" />Nuevo usuario
         </button>
