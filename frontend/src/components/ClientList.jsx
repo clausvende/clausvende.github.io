@@ -73,7 +73,7 @@ export default function ClientList({ go }) {
             <li key={c.id} className="card border-l-4 border-blue-500">
               <div className="flex-1">
                 <p className="font-semibold">{c.name}</p>
-                <p className="text-sm text-gray-800">Deuda: ${`$${formatMoney(c.balance)}`}</p>
+                <p className="text-sm text-gray-800">Deuda: {`$${formatMoney(c.balance)}`}</p>
               </div>
               <span className="actions">
                 <button onClick={() => go('client', c.id)} title="Ver">
