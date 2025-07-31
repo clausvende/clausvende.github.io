@@ -2,12 +2,15 @@ import { collection, getDocs, deleteDoc, updateDoc, doc } from 'firebase/firesto
 import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import AddUser from './AddUser'
+import EditUser from './EditUser'
 import { db } from '../firebase'
+import editIcon from '../assets/icons/edit.svg'
 
 export default function UsersList() {
   const [allowed, setAllowed] = useState([])
   const [users, setUsers] = useState([])
   const [showAdd, setShowAdd] = useState(false)
+  const [editUser, setEditUser] = useState(null)
 
   const load = async () => {
     const allowSnap = await getDocs(collection(db, 'usuarios'))
@@ -39,10 +42,17 @@ export default function UsersList() {
           {users.map(u => (
             <li key={u.id} className="card">
               <span className="flex-1">{u.displayName || u.email || u.id}</span>
-              <select value={u.role} onChange={e => changeRole(u.id, e.target.value)} className="border rounded px-2 py-1">
+              <select
+                value={u.role}
+                onChange={e => changeRole(u.id, e.target.value)}
+                className="border rounded px-2 py-1"
+              >
                 <option value="Vendedor">Vendedor</option>
                 <option value="Administrador">Administrador</option>
               </select>
+              <button onClick={() => setEditUser(u)} title="Editar nombre">
+                <img src={editIcon} alt="editar" className="icon" />
+              </button>
             </li>
           ))}
         </ul>
@@ -61,6 +71,11 @@ export default function UsersList() {
       {showAdd && (
         <Modal onClose={() => setShowAdd(false)}>
           <AddUser onDone={() => { setShowAdd(false); load() }} />
+        </Modal>
+      )}
+      {editUser && (
+        <Modal onClose={() => setEditUser(null)}>
+          <EditUser user={editUser} onDone={() => { setEditUser(null); load() }} />
         </Modal>
       )}
     </div>
