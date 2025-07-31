@@ -165,8 +165,6 @@ export default function AccountStatement({ clientId }) {
                 <th className="p-2 text-left">Fecha</th>
                 <th className="p-2 text-left">Descripción</th>
                 <th className="p-2 text-right">Monto</th>
-                <th className="p-2 text-right">Abonado</th>
-                <th className="p-2 text-right">Pendiente</th>
                 <th className="p-2 text-center">Estado</th>
               </tr>
             </thead>
@@ -179,10 +177,6 @@ export default function AccountStatement({ clientId }) {
                     <td className="p-2">{new Date(s.date).toLocaleDateString()}</td>
                     <td className="p-2">{s.description}</td>
                     <td className="p-2 text-right">${formatMoney(s.amount)}</td>
-                    <td className="p-2 text-right">${formatMoney(s.abonado)}</td>
-                    <td className="p-2 text-right">
-                      {s.pagada ? '—' : `$${formatMoney(s.pendiente)}`}
-                    </td>
                     <td className="p-2 text-center">
                       {s.pagada ? (
                         <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">✔ Pagada</span>
