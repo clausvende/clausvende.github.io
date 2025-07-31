@@ -13,13 +13,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
       if (u) {
-        const allowSnap = await getDoc(doc(db, 'usuarios', u.email))
+        const allowRef = doc(db, 'usuarios', u.email)
+        const allowSnap = await getDoc(allowRef)
         if (!allowSnap.exists()) {
           await signOut(auth)
           setUser(null)
           setRole(null)
           return
         }
+        const allowData = allowSnap.data()
         const ref = doc(db, 'users', u.uid)
         const snap = await getDoc(ref)
         let data
@@ -33,9 +35,14 @@ export function AuthProvider({ children }) {
             data.photoURL = u.photoURL
           }
         } else {
-          data = { role: 'Vendedor', email: u.email, displayName: u.displayName, photoURL: u.photoURL }
+          data = {
+            role: allowData?.role || 'Vendedor',
+            email: u.email,
+            displayName: allowData?.name || u.displayName,
+            photoURL: u.photoURL
+          }
           await setDoc(ref, data)
-          setRole('Vendedor')
+          setRole(data.role)
         }
         setUser({ ...u, ...data, id: u.uid })
       } else {

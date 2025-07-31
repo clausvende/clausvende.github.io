@@ -26,10 +26,24 @@ export default function UsersList() {
     load()
   }
 
-  const changeRole = async (id, role) => {
-    await updateDoc(doc(db, 'users', id), { role })
+  const changeRole = async (userId, email, role) => {
+    if (userId) {
+      await updateDoc(doc(db, 'users', userId), { role })
+    }
+    await updateDoc(doc(db, 'usuarios', email), { role })
     load()
   }
+
+  const merged = allowed.map(a => {
+    const user = users.find(u => u.email === a.id)
+    return {
+      email: a.id,
+      name: user?.displayName || a.name,
+      photoURL: user?.photoURL,
+      role: user?.role || a.role || 'Vendedor',
+      userId: user?.id
+    }
+  })
 
   return (
     <div className="space-y-6">
@@ -39,39 +53,31 @@ export default function UsersList() {
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Usuarios Registrados</h3>
         <ul className="grid gap-2">
-          {users.map(u => (
-            <li key={u.id} className="card sm:flex-row sm:items-center">
+          {merged.map(u => (
+            <li key={u.email} className="card sm:flex-row sm:items-center">
               <img
                 src={u.photoURL || '/vite.svg'}
                 alt="avatar"
                 className="w-12 h-12 rounded-full"
               />
               <div className="flex-1">
-                <p className="font-semibold">{u.displayName || u.email || u.id}</p>
+                <p className="font-semibold">{u.name || u.email}</p>
                 <p className="text-sm text-gray-600">{u.email}</p>
               </div>
               <select
                 value={u.role}
-                onChange={e => changeRole(u.id, e.target.value)}
+                onChange={e => changeRole(u.userId, u.email, e.target.value)}
                 className="border rounded px-2 py-1"
               >
                 <option value="Vendedor">Vendedor</option>
                 <option value="Administrador">Administrador</option>
               </select>
-              <button onClick={() => setEditUser(u)} title="Editar nombre">
-                <img src={editIcon} alt="editar" className="icon" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Correos Permitidos</h3>
-        <ul className="grid gap-2">
-          {allowed.map(a => (
-            <li key={a.id} className="card">
-              <span className="flex-1">{a.id}</span>
-              <button onClick={() => removeAllow(a.id)} className="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
+              {u.userId && (
+                <button onClick={() => setEditUser(users.find(us => us.id === u.userId))} title="Editar nombre">
+                  <img src={editIcon} alt="editar" className="icon" />
+                </button>
+              )}
+              <button onClick={() => removeAllow(u.email)} className="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
             </li>
           ))}
         </ul>
