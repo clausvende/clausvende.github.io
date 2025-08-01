@@ -6,7 +6,7 @@ import AddClient from './AddClient';
 import Modal from './Modal';
 import editIcon from '../assets/icons/edit.svg';
 import trash from '../assets/icons/trash.svg';
-import { formatMoney, applyPaymentsToSales } from '../utils';
+import { formatMoney, applyPaymentsToSales, parseLocalDate } from '../utils';
 
 export default function ClientDetails({ id, go }) {
   const [client, setClient] = useState(null);
@@ -72,7 +72,7 @@ export default function ClientDetails({ id, go }) {
     if (isNaN(newValue) || !editDate) return;
     await updateDoc(doc(db, 'clients', id, 'payments', p.id), {
       amount: newValue,
-      date: new Date(editDate).getTime(),
+      date: parseLocalDate(editDate),
     });
     const diff = newValue - p.amount;
     if (diff !== 0) {
@@ -104,7 +104,7 @@ export default function ClientDetails({ id, go }) {
     if (isNaN(newValue) || !editSaleDate) return;
     await updateDoc(doc(db, 'clients', id, 'sales', s.id), {
       amount: newValue,
-      date: new Date(editSaleDate).getTime(),
+      date: parseLocalDate(editSaleDate),
     });
     const diff = newValue - s.amount;
     if (diff !== 0) {

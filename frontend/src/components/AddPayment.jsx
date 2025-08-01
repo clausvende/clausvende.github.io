@@ -1,6 +1,7 @@
 import { collection, addDoc, updateDoc, increment, doc } from 'firebase/firestore';
 import { useState } from 'react';
 import { db } from '../firebase';
+import { parseLocalDate } from '../utils';
 
 export default function AddPayment({ clientId, onDone }) {
   const [amount, setAmount] = useState('');
@@ -12,7 +13,7 @@ export default function AddPayment({ clientId, onDone }) {
     if (isNaN(value) || !date) return;
     await addDoc(collection(db, 'clients', clientId, 'payments'), {
       amount: value,
-      date: new Date(date).getTime(),
+      date: parseLocalDate(date),
     });
     await updateDoc(doc(db, 'clients', clientId), {
       balance: increment(-value),
