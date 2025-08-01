@@ -34,7 +34,7 @@ export default function AccountStatement({ clientId }) {
     let y = margin;
 
     pdf.setFontSize(16);
-    pdf.text('Claudia Vende', pageWidth / 2, y, { align: 'center' });
+    pdf.text('Vende Más', pageWidth / 2, y, { align: 'center' });
     y += 7;
     pdf.setFontSize(12);
     pdf.text('Estado de Cuenta', pageWidth / 2, y, { align: 'center' });
