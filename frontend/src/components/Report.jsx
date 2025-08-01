@@ -93,12 +93,16 @@ export default function Report() {
     }
 
     const monthsToShow = 6
-    const months = []
-    const nowDate = new Date()
-    for (let i = monthsToShow - 1; i >= 0; i--) {
-      const d = new Date(nowDate.getFullYear(), nowDate.getMonth() - i, 1)
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      months.push({ month: key, total: salesMap[key] || 0 })
+    const keys = Object.keys(salesMap).sort()
+    let months = keys.slice(-monthsToShow).map(m => ({ month: m, total: salesMap[m] }))
+    if (months.length === 0) {
+      const nowDate = new Date()
+      months = []
+      for (let i = monthsToShow - 1; i >= 0; i--) {
+        const d = new Date(nowDate.getFullYear(), nowDate.getMonth() - i, 1)
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        months.push({ month: key, total: salesMap[key] || 0 })
+      }
     }
 
     const recoveryRate = totalSales ? (monthlyPayments / totalSales) * 100 : 0
