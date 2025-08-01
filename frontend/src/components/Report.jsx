@@ -231,36 +231,24 @@ export default function Report() {
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-medium mb-2">Distribución de saldos</h3>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-4 bg-gray-200 rounded overflow-hidden flex">
-              <div className="bg-green-500" style={{ width: `${(metrics.dueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
-              <div className="bg-red-500" style={{ width: `${(metrics.overdueBalance / (metrics.dueBalance + metrics.overdueBalance || 1)) * 100}%` }} />
-            </div>
-              <span className="text-sm">{`$${formatMoney(metrics.dueBalance)} / $${formatMoney(metrics.overdueBalance)}`}</span>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-medium mb-2">Ventas a crédito por mes</h3>
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr>
-                <th className="px-2 py-1 border-b text-center">Mes</th>
-                <th className="px-2 py-1 border-b text-center">Cantidad</th>
+      <div className="bg-white p-4 rounded shadow">
+        <h3 className="font-medium mb-2">Ventas a crédito por mes</h3>
+        <table className="w-full text-sm text-left">
+          <thead>
+            <tr>
+              <th className="px-2 py-1 border-b text-center">Mes</th>
+              <th className="px-2 py-1 border-b text-center">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {metrics.monthlySales.map(m => (
+              <tr key={m.month} className="odd:bg-gray-50">
+                <td className="px-2 py-1 border-b">{m.month}</td>
+                <td className="px-2 py-1 border-b text-center">{m.count}</td>
               </tr>
-            </thead>
-            <tbody>
-              {metrics.monthlySales.map(m => (
-                <tr key={m.month} className="odd:bg-gray-50">
-                  <td className="px-2 py-1 border-b">{m.month}</td>
-                  <td className="px-2 py-1 border-b text-center">{m.count}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
 
 
