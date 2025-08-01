@@ -57,7 +57,7 @@ export default function Report() {
         totalSales += s.amount
         const d = new Date(s.date)
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-        salesMap[key] = (salesMap[key] || 0) + s.amount
+        salesMap[key] = (salesMap[key] || 0) + 1
       })
 
       payments.forEach(p => {
@@ -94,14 +94,14 @@ export default function Report() {
 
     const monthsToShow = 6
     const keys = Object.keys(salesMap).sort()
-    let months = keys.slice(-monthsToShow).map(m => ({ month: m, total: salesMap[m] }))
+    let months = keys.slice(-monthsToShow).map(m => ({ month: m, count: salesMap[m] }))
     if (months.length === 0) {
       const nowDate = new Date()
       months = []
       for (let i = monthsToShow - 1; i >= 0; i--) {
         const d = new Date(nowDate.getFullYear(), nowDate.getMonth() - i, 1)
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-        months.push({ month: key, total: salesMap[key] || 0 })
+        months.push({ month: key, count: salesMap[key] || 0 })
       }
     }
 
@@ -244,17 +244,22 @@ export default function Report() {
         </div>
         <div className="bg-white p-4 rounded shadow">
           <h3 className="font-medium mb-2">Ventas a crédito por mes</h3>
-          <div className="flex items-end gap-1 h-32">
-            {(() => {
-              const max = Math.max(...metrics.monthlySales.map(m => m.total), 1)
-              return metrics.monthlySales.map(m => (
-                <div key={m.month} className="flex flex-col items-center flex-1">
-                  <div className="bg-blue-500 w-full" style={{ height: `${(m.total / max) * 100}%` }} />
-                  <span className="text-xs mt-1">{m.month.slice(5)}</span>
-                </div>
-              ))
-            })()}
-          </div>
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr>
+                <th className="px-2 py-1 border-b">Mes</th>
+                <th className="px-2 py-1 border-b">Cantidad de ventas a crédito</th>
+              </tr>
+            </thead>
+            <tbody>
+              {metrics.monthlySales.map(m => (
+                <tr key={m.month} className="odd:bg-gray-50">
+                  <td className="px-2 py-1 border-b">{m.month}</td>
+                  <td className="px-2 py-1 border-b text-center">{m.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
