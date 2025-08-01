@@ -8,7 +8,7 @@ export default function AddSale({ go, onDone, sale }) {
   const [clients, setClients] = useState([]);
   const [clientId, setClientId] = useState(sale?.clientId || '');
   const [amount, setAmount] = useState(sale?.amount || '');
-  const [desc, setDesc] = useState(sale?.description || '');
+  const [desc, setDesc] = useState((sale?.description || '').toUpperCase());
   const [date, setDate] = useState(() => {
     if (sale?.date) return new Date(sale.date).toISOString().split('T')[0];
     return new Date().toISOString().split('T')[0];
@@ -26,7 +26,7 @@ export default function AddSale({ go, onDone, sale }) {
     if (sale) {
       setClientId(sale.clientId);
       setAmount(sale.amount);
-      setDesc(sale.description);
+      setDesc(sale.description.toUpperCase());
       setDate(new Date(sale.date).toISOString().split('T')[0]);
     }
   }, [sale]);
@@ -40,7 +40,7 @@ export default function AddSale({ go, onDone, sale }) {
       const diff = value - sale.amount;
       await updateDoc(doc(ref, 'sales', sale.id), {
         amount: value,
-        description: desc,
+        description: desc.toUpperCase(),
         date: new Date(date).getTime()
       });
       if (diff !== 0) {
@@ -48,7 +48,7 @@ export default function AddSale({ go, onDone, sale }) {
       }
     } else {
       const ts = new Date(date).getTime();
-      await addDoc(collection(ref, 'sales'), { amount: value, description: desc, date: ts });
+      await addDoc(collection(ref, 'sales'), { amount: value, description: desc.toUpperCase(), date: ts });
       await updateDoc(ref, { balance: increment(value), total: increment(value) });
 
       const client = clients.find(c => c.id === clientId);
@@ -117,7 +117,7 @@ export default function AddSale({ go, onDone, sale }) {
       <input
         className="w-full border rounded px-3 py-2"
         value={desc}
-        onChange={e => setDesc(e.target.value)}
+        onChange={e => setDesc(e.target.value.toUpperCase())}
         placeholder="Descripción"
         required
       />
