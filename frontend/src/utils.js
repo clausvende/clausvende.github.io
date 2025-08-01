@@ -5,6 +5,14 @@ export function formatMoney(value) {
   });
 }
 
+// Convierte una fecha en formato YYYY-MM-DD a la marca de tiempo local a
+// medianoche. Esto evita el desfase de zona horaria que ocurre al usar
+// `new Date(string)` directamente.
+export function parseLocalDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).getTime();
+}
+
 // Aplica abonos a las ventas en orden cronológico, actualizando
 // los campos `abonado`, `pendiente` y `pagada` de cada venta.
 export function applyPaymentsToSales(sales, payments) {

@@ -2,7 +2,7 @@ import { collection, getDocs, doc, addDoc, updateDoc, increment } from 'firebase
 import { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import { db } from '../firebase';
-import { formatMoney } from '../utils';
+import { formatMoney, parseLocalDate } from '../utils';
 
 export default function AddSale({ go, onDone, sale }) {
   const [clients, setClients] = useState([]);
@@ -41,13 +41,13 @@ export default function AddSale({ go, onDone, sale }) {
       await updateDoc(doc(ref, 'sales', sale.id), {
         amount: value,
         description: desc.toUpperCase(),
-        date: new Date(date).getTime()
+        date: parseLocalDate(date)
       });
       if (diff !== 0) {
         await updateDoc(ref, { balance: increment(diff), total: increment(diff) });
       }
     } else {
-      const ts = new Date(date).getTime();
+      const ts = parseLocalDate(date);
       await addDoc(collection(ref, 'sales'), { amount: value, description: desc.toUpperCase(), date: ts });
       await updateDoc(ref, { balance: increment(value), total: increment(value) });
 
