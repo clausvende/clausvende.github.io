@@ -58,7 +58,7 @@ export default function AddSale({ go, onDone, sale }) {
         // Encabezado
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(16);
-        pdf.text('Claudia Vende', 29, 8, { align: 'center' });
+        pdf.text('Vende Más', 29, 8, { align: 'center' });
         pdf.setLineWidth(0.1);
         pdf.line(5, 11, 53, 11);
 
