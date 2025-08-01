@@ -247,8 +247,8 @@ export default function Report() {
           <table className="w-full text-sm text-left">
             <thead>
               <tr>
-                <th className="px-2 py-1 border-b">Mes</th>
-                <th className="px-2 py-1 border-b">Cantidad de ventas a crédito</th>
+                <th className="px-2 py-1 border-b text-center">Mes</th>
+                <th className="px-2 py-1 border-b text-center">Cantidad</th>
               </tr>
             </thead>
             <tbody>
